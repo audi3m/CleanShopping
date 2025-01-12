@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+//parameters
+//query: String
+//display: Int
+//start: Int
+//sort: String
