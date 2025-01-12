@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+// parameters
+// query: String
+// sort: String
+// page: Int
+// size: Int
+// target: String
+//
+//
