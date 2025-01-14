@@ -7,13 +7,18 @@
 
 import Foundation
 
-struct KakaoBookResponseDTO: Decodable {
-    let meta: KakaoMeta
-    let documents: [KakaoDocument]
+struct KakaoBookResponseDTO: Decodable, BookResponseProtocol {
+    let meta: KakaoMetaDTO
+    let documents: [KakaoDocumentDTO]
+    
+    func toDomain() -> BookResponse {
+        return BookResponse(totalCount: meta.totalCount,
+                            books: documents.map { $0.toDomain() })
+    }
 }
 
 struct KakaoMetaDTO: Decodable {
-    let totalCount: Int
+    let totalCount: Int // 총 결과 수
     let pageableCount: Int
     let isEnd: Bool
     
@@ -24,10 +29,10 @@ struct KakaoMetaDTO: Decodable {
     }
 }
 
-struct KakaoDocumentDTO: Decodable {
+struct KakaoDocumentDTO: Decodable, BookDTOProtocol {
     let title: String
     let contents: String
-    let url: String
+    let url: String // 상세
     let isbn: String
     let datetime: Date
     let authors: [String]
@@ -35,6 +40,18 @@ struct KakaoDocumentDTO: Decodable {
     let translators: [String]
     let price: Int
     let sale_price: Int
-    let thumbnail: String
+    let thumbnail: String // 표지
     let status: String
+    
+    func toDomain() -> Book {
+        return Book(title: title,
+                    link: url,
+                    image: thumbnail,
+                    author: authors.joined(separator: ", "),
+                    discount: String(price),
+                    publisher: publisher,
+                    pubdate: datetime,
+                    isbn: isbn,
+                    description: contents)
+    }
 }
