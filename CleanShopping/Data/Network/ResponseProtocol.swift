@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+protocol BookResponseProtocol: Decodable {
+    func toDomain() -> BookResponse
+}
+
+protocol BookDTOProtocol {
+    func toDomain() -> Book
+}
