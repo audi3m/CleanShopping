@@ -13,9 +13,32 @@ struct Book: Identifiable {
     let link: String
     let image: String
     let author: String
-    let discount: String
+    let discount: String?
     let publisher: String
     let pubdate: Date
-    let isbn: Int
+    let isbn: String
     let description: String
+}
+
+extension Book {
+    var info: String {
+        return "저자" + author + " | " + "출판" + publisher + " | " + pubdate.toFormat()
+    }
+    
+    var price: String {
+        if let discount {
+            return discount + "원"
+        } else {
+            return ""
+        }
+    }
+}
+
+extension Date {
+    func toFormat() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        return dateFormatter.string(from: self)
+    }
 }
