@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct BookResponse {
+    let totalCount: Int
+    let isEnd: Bool
+    let books: [Book]
+}
