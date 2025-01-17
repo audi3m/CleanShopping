@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct KakaoBookResponseDTO: Decodable, BookResponseProtocol {
+struct KakaoBookResponseDTO: Decodable {
     let meta: KakaoMetaDTO
     let documents: [KakaoDocumentDTO]
     
@@ -34,7 +34,7 @@ struct KakaoDocumentDTO: Decodable, BookDTOProtocol {
     let contents: String
     let url: String // 상세
     let isbn: String
-    let datetime: Date
+    let datetime: String
     let authors: [String]
     let publisher: String
     let translators: [String]
