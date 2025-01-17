@@ -13,17 +13,45 @@ final class BookNetworkService {
     static let shared = BookNetworkService()
     private init() { }
     
-    func searhBooks(api: SearchBookRouter, handler: @escaping (Result<BookResponse, Error>) -> Void) {
-        let request = try SearchBookRo
-        AF.request(request)
-            .validate(statusCode: 200...299)
-            .responseDecodable(of: BookResponse.self) { response in
-                
-            }
+    func searhNaverBooks(params: NaverBookRequestParameters,
+                         handler: @escaping (Result<NaverBookResponseDTO, Error>) -> Void) {
+        do {
+            let request = try SearchBookRouter.naver(param: params).asURLRequest()
+            AF.request(request)
+                .validate(statusCode: 200...299)
+                .responseDecodable(of: NaverBookResponseDTO.self) { response in
+                    switch response.result {
+                    case .success(let value):
+                        print(value)
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+        } catch {
+            print(error)
+        }
         
     }
     
-    
+    func searhKakaoBooks(params: KakaoBookRequestParameters,
+                         handler: @escaping (Result<KakaoBookResponseDTO, Error>) -> Void) {
+        do {
+            let request = try SearchBookRouter.kakao(param: params).asURLRequest()
+            AF.request(request)
+                .validate(statusCode: 200...299)
+                .responseDecodable(of: KakaoBookResponseDTO.self) { response in
+                    switch response.result {
+                    case .success(let value):
+                        print(value)
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+        } catch {
+            print(error)
+        }
+        
+    }
     
     
 }
