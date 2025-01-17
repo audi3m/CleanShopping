@@ -7,19 +7,20 @@
 
 import Foundation
 
-// parameters
-// query: String
-// sort: String
-// page: Int
-// size: Int
-// target: String
-
-struct KakaoBookRequestParameter {
+struct KakaoBookRequestParameters {
     let query: String
-    let display = "20"
-    let start: String
     let sort: KakaoSort
-    let target: KakaoTarget
+    let page: Int
+    let size: Int
+    let target: KakaoTarget?
+    
+    init(query: String, sort: KakaoSort = .accuracy, page: Int, size: Int = 20, target: KakaoTarget? = nil) {
+        self.query = query
+        self.sort = sort
+        self.page = page
+        self.size = size
+        self.target = target
+    }
 }
 
 enum KakaoSort: String {
