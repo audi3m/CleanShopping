@@ -27,7 +27,29 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureHierarchy()
+        configureLayout()
         configureUI()
+        
+//        let params = KakaoBookRequestParameters(query: "일론", page: 1)
+//        BookNetworkService.shared.searhKakaoBooks(params: params) { response in
+//            switch response {
+//            case .success(let success):
+//                print(success)
+//            case .failure(let failure):
+//                print(failure)
+//            }
+//        }
+        
+        let params2 = NaverBookRequestParameters(query: "일론", start: 1)
+        BookNetworkService.shared.searhNaverBooks(params: params2) { response in
+            switch response {
+            case .success(let success):
+                print(success)
+            case .failure(let failure): 
+                print(failure)
+            }
+        }
+        
     }
 
 }
@@ -43,16 +65,23 @@ extension SearchViewController {
         view.addSubview(collectionView)
     }
     
-    private func configureUI() {
+    private func configureLayout() {
         searchBar.snp.makeConstraints { make in
-            
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.horizontalEdges.equalToSuperview().inset(10)
+            make.height.equalTo(44)
         }
         
         collectionView.snp.makeConstraints { make in
-            
+            make.top.equalTo(searchBar.snp.bottom)
+            make.horizontalEdges.equalToSuperview()
         }
     }
     
+    private func configureUI() {
+        view.backgroundColor = .white
+        navigationItem.title = "도서 검색"
+    }
     
 }
 

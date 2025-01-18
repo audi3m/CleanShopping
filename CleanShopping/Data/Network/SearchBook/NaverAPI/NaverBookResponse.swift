@@ -27,8 +27,8 @@ struct NaverBookDTO: Decodable, BookDTOProtocol {
     let author: String
     let discount: String
     let publisher: String
-    let pubdate: Date
-    let isbn: Int
+    let pubdate: String
+    let isbn: String
     let description: String
     
     func toDomain() -> Book {
@@ -39,7 +39,7 @@ struct NaverBookDTO: Decodable, BookDTOProtocol {
                     discount: discount,
                     publisher: publisher,
                     pubdate: pubdate,
-                    isbn: String(isbn),
+                    isbn: isbn,
                     description: description)
     }
 }
