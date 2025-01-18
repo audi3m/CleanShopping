@@ -5,4 +5,65 @@
 //  Created by J Oh on 1/18/25.
 //
 
-import Foundation
+import UIKit
+import SnapKit
+
+final class HomeTabBarController: UITabBarController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        tabBar.tintColor = .black
+        
+        let viewControllers = TabItems.allCases.map { tabItem -> UIViewController in
+            let viewController = tabItem.viewController
+            viewController.tabBarItem = UITabBarItem(title: tabItem.rawValue,
+                                                     image: tabItem.icon,
+                                                     tag: tabItem.tag)
+            return viewController
+        }
+        
+        self.viewControllers = viewControllers
+    }
+    
+    private enum TabItems: String, CaseIterable {
+        case search = "검색"
+        case likes = "좋아요"
+        case settings = "설정"
+        
+        var icon: UIImage? {
+            switch self {
+            case .search:
+                return UIImage(systemName: "magnifyingglass")
+            case .likes:
+                return UIImage(systemName: "heart.fill")
+            case .settings:
+                return UIImage(systemName: "gearshape")
+            }
+        }
+        
+        var viewController: UIViewController {
+            switch self {
+            case .search:
+                return UINavigationController(rootViewController: SearchViewController())
+            case .likes:
+                return UINavigationController(rootViewController: UIViewController())
+            case .settings:
+                return UINavigationController(rootViewController: UIViewController())
+            }
+        }
+        
+        var tag: Int {
+            switch self {
+            case .search:
+                0
+            case .likes:
+                1
+            case .settings:
+                2
+            }
+        }
+    }
+}
+
+
