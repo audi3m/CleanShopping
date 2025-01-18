@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D45322712D2808690050CA17 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D45322702D2808690050CA17 /* .gitignore */; };
+		D45322F42D354AD80050CA17 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D45322F32D354AD80050CA17 /* SnapKit */; };
+		D45322F72D354AE70050CA17 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D45322F62D354AE70050CA17 /* Kingfisher */; };
+		D453233C2D3800580050CA17 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = D453233B2D3800580050CA17 /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D453221F2D272F770050CA17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,13 +34,14 @@
 		D45322082D272F760050CA17 /* CleanShopping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CleanShopping.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D453221E2D272F770050CA17 /* CleanShoppingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleanShoppingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D45322282D272F780050CA17 /* CleanShoppingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleanShoppingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D45322702D2808690050CA17 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		D45322302D272F780050CA17 /* Exceptions for "CleanShopping" folder in "CleanShopping" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				App/Info.plist,
+				Info.plist,
 			);
 			target = D45322072D272F760050CA17 /* CleanShopping */;
 		};
@@ -65,6 +73,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D453233C2D3800580050CA17 /* Alamofire in Frameworks */,
+				D45322F72D354AE70050CA17 /* Kingfisher in Frameworks */,
+				D45322F42D354AD80050CA17 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +99,7 @@
 		D45321FF2D272F760050CA17 = {
 			isa = PBXGroup;
 			children = (
+				D45322702D2808690050CA17 /* .gitignore */,
 				D453220A2D272F760050CA17 /* CleanShopping */,
 				D45322212D272F770050CA17 /* CleanShoppingTests */,
 				D453222B2D272F780050CA17 /* CleanShoppingUITests */,
@@ -125,6 +137,9 @@
 			);
 			name = CleanShopping;
 			packageProductDependencies = (
+				D45322F32D354AD80050CA17 /* SnapKit */,
+				D45322F62D354AE70050CA17 /* Kingfisher */,
+				D453233B2D3800580050CA17 /* Alamofire */,
 			);
 			productName = CleanShopping;
 			productReference = D45322082D272F760050CA17 /* CleanShopping.app */;
@@ -208,6 +223,11 @@
 			);
 			mainGroup = D45321FF2D272F760050CA17;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D45322F22D354AD80050CA17 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				D45322F52D354AE70050CA17 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				D453233A2D3800580050CA17 /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D45322092D272F760050CA17 /* Products */;
 			projectDirPath = "";
@@ -225,6 +245,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D45322712D2808690050CA17 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,9 +315,9 @@
 				INFOPLIST_FILE = CleanShopping/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -304,9 +325,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Ray.CleanShopping;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -322,9 +347,9 @@
 				INFOPLIST_FILE = CleanShopping/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -332,9 +357,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Ray.CleanShopping;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -569,6 +598,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D45322F22D354AD80050CA17 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		D45322F52D354AE70050CA17 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.3;
+			};
+		};
+		D453233A2D3800580050CA17 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D45322F32D354AD80050CA17 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D45322F22D354AD80050CA17 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		D45322F62D354AE70050CA17 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D45322F52D354AE70050CA17 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		D453233B2D3800580050CA17 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D453233A2D3800580050CA17 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D45322002D272F760050CA17 /* Project object */;
 }
