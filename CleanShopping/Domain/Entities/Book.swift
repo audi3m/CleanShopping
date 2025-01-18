@@ -15,14 +15,14 @@ struct Book: Identifiable {
     let author: String
     let discount: String?
     let publisher: String
-    let pubdate: Date
+    let pubdate: String
     let isbn: String
     let description: String
 }
 
 extension Book {
     var info: String {
-        return "저자" + author + " | " + "출판" + publisher + " | " + pubdate.toFormat()
+        return "저자" + author + " | " + "출판" + publisher + " | " + pubdate
     }
     
     var price: String {
