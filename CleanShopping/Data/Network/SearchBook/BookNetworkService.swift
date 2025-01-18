@@ -13,6 +13,27 @@ final class BookNetworkService {
     static let shared = BookNetworkService()
     private init() { }
     
+    func searchBooks<T: Decodable>(model: T.Type,
+                                   params: BookRequestProtocol,
+                                   handler: @escaping (Result<T, Error>) -> Void) {
+        do {
+            let request = try SearchBookRouter.kakao(param: params as! KakaoBookRequestParameters).asURLRequest()
+            print(request)
+            AF.request(request)
+                .validate(statusCode: 200...299)
+                .responseDecodable(of: T.self) { response in
+                    switch response.result {
+                    case .success(let value):
+                        print(value)
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+        } catch {
+            print(error)
+        }
+    }
+    
     func searhNaverBooks(params: NaverBookRequestParameters,
                          handler: @escaping (Result<NaverBookResponseDTO, Error>) -> Void) {
         do {
@@ -30,7 +51,6 @@ final class BookNetworkService {
         } catch {
             print(error)
         }
-        
     }
     
     func searhKakaoBooks(params: KakaoBookRequestParameters,
@@ -50,8 +70,5 @@ final class BookNetworkService {
         } catch {
             print(error)
         }
-        
     }
-    
-    
 }
