@@ -35,9 +35,9 @@ extension SearchBookRouter: TargetType {
     var path: String {
         switch self {
         case .naver:
-            return ""
+            return "/v1/search/book.json"
         case .kakao:
-            return ""
+            return "/v3/search/book"
         }
     }
     
