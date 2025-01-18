@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class SearchViewController: UIViewController {
+final class SearchViewController: BaseViewController {
     
     // 검색창, 검색 결과 리스트, 상세화면
     private lazy var searchBar: UISearchBar = {
@@ -26,46 +26,15 @@ final class SearchViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureHierarchy()
-        configureLayout()
-        configureUI()
-        
-//        let params = KakaoBookRequestParameters(query: "일론", page: 1)
-//        BookNetworkService.shared.searhKakaoBooks(params: params) { response in
-//            switch response {
-//            case .success(let success):
-//                print(success)
-//            case .failure(let failure):
-//                print(failure)
-//            }
-//        }
-        
-        let params2 = NaverBookRequestParameters(query: "일론", start: 1)
-        BookNetworkService.shared.searhNaverBooks(params: params2) { response in
-            switch response {
-            case .success(let success):
-                print(success)
-            case .failure(let failure): 
-                print(failure)
-            }
-        }
-        
+        naverSearchTest()
     }
-
-}
-
-extension SearchViewController: UISearchBarDelegate {
     
-}
-
-extension SearchViewController {
-    
-    private func configureHierarchy() {
+    override func setHierarchy() {
         view.addSubview(searchBar)
         view.addSubview(collectionView)
     }
     
-    private func configureLayout() {
+    override func setLayout() {
         searchBar.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.horizontalEdges.equalToSuperview().inset(10)
@@ -78,11 +47,45 @@ extension SearchViewController {
         }
     }
     
-    private func configureUI() {
+    override func setUI() {
         view.backgroundColor = .white
         navigationItem.title = "도서 검색"
     }
+
+}
+
+// Search Bar
+extension SearchViewController: UISearchBarDelegate {
     
+}
+
+// Network
+extension SearchViewController {
+    
+    private func kakaoSearchTest() {
+        let params = KakaoBookRequestParameters(query: "일론", page: 1)
+        BookNetworkService.shared.searhKakaoBooks(params: params) { response in
+            switch response {
+            case .success(let success):
+                print(success)
+            case .failure(let failure):
+                print(failure)
+            }
+        }
+    }
+    
+    private func naverSearchTest() {
+        let params = NaverBookRequestParameters(query: "일론")
+        BookNetworkService.shared.searhNaverBooks(params: params) { response in
+            switch response {
+            case .success(let success):
+                print(success)
+            case .failure(let failure):
+                print(failure)
+            }
+        }
+    }
+            
 }
 
 extension SearchViewController {

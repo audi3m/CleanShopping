@@ -54,24 +54,20 @@ extension SearchedBookCell {
             make.leading.equalToSuperview().inset(10)
             // 너비
         }
-        
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(10)
             make.leading.equalTo(imageView.snp.trailing).offset(20)
             make.trailing.equalToSuperview().inset(10)
         }
-        
         infoLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel).offset(10)
             make.leading.equalTo(imageView).offset(20)
             make.trailing.equalToSuperview().inset(10)
         }
-        
         priceLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
         }
-            
     }
     
     func configureData(book: Book) {
