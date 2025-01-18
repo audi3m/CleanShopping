@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct NaverBookErrorResponse: Decodable {
+    let errorMessage: String
+    let errorCode: String
+}
