@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct NaverBookRequestParameters {
+struct NaverBookRequestParameters: BookRequestProtocol {
     let query: String
     let display: Int
     let start: Int
     let sort: NaverSort
     
-    init(query: String, display: Int = 20, start: Int, sort: NaverSort = .sim) {
+    init(query: String, display: Int = 20, start: Int = 1, sort: NaverSort = .sim) {
         self.query = query
         self.display = display
         self.start = start

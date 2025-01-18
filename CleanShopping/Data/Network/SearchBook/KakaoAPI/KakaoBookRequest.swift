@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct KakaoBookRequestParameters {
+struct KakaoBookRequestParameters: BookRequestProtocol {
     let query: String
     let sort: KakaoSort
     let page: Int
