@@ -17,9 +17,9 @@ extension SearchBookRouter: TargetType {
     var baseURL: String {
         switch self {
         case .naver:
-            return BookAPI.naver.url
+            return NaverBookAPI.baseURL
         case .kakao:
-            return BookAPI.kakao.url
+            return KakaoBookAPI.baseURL
         }
     }
     
