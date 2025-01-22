@@ -1,5 +1,5 @@
 //
-//  SearchedBookCell.swift
+//  BookCollectionViewCell.swift
 //  CleanShopping
 //
 //  Created by J Oh on 1/13/25.
@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-final class SearchedBookCell: UICollectionViewCell {
+final class BookCollectionViewCell: UICollectionViewCell {
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -42,7 +42,7 @@ final class SearchedBookCell: UICollectionViewCell {
     
 }
 
-extension SearchedBookCell {
+extension BookCollectionViewCell {
     private func configureHierarchy() {
         let views = [imageView, titleLabel, infoLabel, priceLabel]
         views.forEach { contentView.addSubview($0) }
