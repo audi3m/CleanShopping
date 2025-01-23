@@ -19,14 +19,16 @@ final class SearchViewController: BaseViewController {
         return searchBar
     }()
     
-    private let collectionView: UICollectionView = {
+    private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: SearchViewController.layout)
+        collectionView.delegate = self
+        collectionView.dataSource = self
         return collectionView
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        naverSearchTest()
+        naverSearchTest(query: "일론")
     }
     
     override func setHierarchy() {
@@ -59,11 +61,23 @@ extension SearchViewController: UISearchBarDelegate {
     
 }
 
+extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        return UICollectionViewCell()
+    }
+    
+    
+}
+
 // Network
 extension SearchViewController {
     
-    private func kakaoSearchTest() {
-        let params = KakaoBookRequestParameters(query: "일론", page: 1)
+    private func kakaoSearchTest(query: String) {
+        let params = KakaoBookRequestParameters(query: query, sort: .accuracy, page: 1)
         BookNetworkService.shared.searhKakaoBooks(params: params) { response in
             switch response {
             case .success(let success):
@@ -74,8 +88,8 @@ extension SearchViewController {
         }
     }
     
-    private func naverSearchTest() {
-        let params = NaverBookRequestParameters(query: "일론")
+    private func naverSearchTest(query: String) {
+        let params = NaverBookRequestParameters(query: query, start: 1, sort: .sim)
         BookNetworkService.shared.searhNaverBooks(params: params) { response in
             switch response {
             case .success(let success):
