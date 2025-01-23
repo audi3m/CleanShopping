@@ -11,7 +11,6 @@ struct BookRequest {
     let api: BookAPI
     let query: String
     let page: Int
-     
 }
 
 extension BookRequest {
@@ -20,15 +19,18 @@ extension BookRequest {
         case .naver:
             return NaverBookRequestParameters(query: query,
                                               display: 20,
-                                              start: <#T##Int#>,
-                                              sort: <#T##NaverSort#>)
+                                              start: 1 + (page - 1) * 20,
+                                              sort: .sim)
         case .kakao:
             return KakaoBookRequestParameters(query: query,
-                                              sort: <#T##KakaoSort#>,
-                                              page: <#T##Int#>,
+                                              sort: .accuracy,
+                                              page: page,
                                               size: 20)
         }
-        
-        
     }
 }
+
+//enum SortOption {
+//    case date
+//    case accuracy
+//}
