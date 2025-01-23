@@ -9,11 +9,11 @@ import Foundation
 
 struct NaverBookRequestParameters: BookRequestProtocol {
     let query: String
-    let display: Int
-    let start: Int
-    let sort: NaverSort
+    let display: Int // 20개씩
+    let start: Int // 시작 번호
+    let sort: NaverBookSortOptions
     
-    init(query: String, display: Int = 20, start: Int = 1, sort: NaverSort = .sim) {
+    init(query: String, display: Int = 20, start: Int, sort: NaverBookSortOptions) {
         self.query = query
         self.display = display
         self.start = start
@@ -21,7 +21,7 @@ struct NaverBookRequestParameters: BookRequestProtocol {
     }
 }
 
-enum NaverSort: String {
+enum NaverBookSortOptions: String {
     case sim = "sim"
     case date = "date"
 }
