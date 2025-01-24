@@ -13,7 +13,8 @@ struct KakaoBookResponseDTO: Decodable {
     
     func toDomain() -> BookResponse {
         return BookResponse(totalCount: meta.totalCount,
-                            books: documents.map { $0.toDomain() })
+                            books: documents.map { $0.toDomain() },
+                            isEnd: meta.isEnd)
     }
 }
 

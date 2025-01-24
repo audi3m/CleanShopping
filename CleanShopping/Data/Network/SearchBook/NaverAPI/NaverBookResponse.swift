@@ -16,7 +16,8 @@ struct NaverBookResponseDTO: Decodable, BookResponseProtocol {
     
     func toDomain() -> BookResponse {
         return BookResponse(totalCount: total,
-                            books: items.map { $0.toDomain() })
+                            books: items.map { $0.toDomain() },
+                            isEnd: total <= start + display)
     }
 }
 
