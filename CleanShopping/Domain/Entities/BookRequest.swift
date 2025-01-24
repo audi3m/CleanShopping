@@ -11,11 +11,12 @@ struct BookRequest {
     let api: BookAPI
     let query: String
     let page: Int
+//    let sort: SortOption
 }
 
 extension BookRequest {
-    func toDTO(bookRequest: BookRequest) -> BookRequestProtocol {
-        switch bookRequest.api {
+    func toDTO() -> BookRequestProtocol {
+        switch api {
         case .naver:
             return NaverBookRequestParameters(query: query,
                                               display: 20,

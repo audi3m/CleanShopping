@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 
+// 네트워크 Request 만들 때 필요한 속성들 케이스로 나누어 정리 해놓은 것
 enum SearchBookRouter {
     case naver(param: NaverBookRequestParameters)
     case kakao(param: KakaoBookRequestParameters)

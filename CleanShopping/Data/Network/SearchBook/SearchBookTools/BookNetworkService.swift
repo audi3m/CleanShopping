@@ -39,9 +39,9 @@ final class BookNetworkService {
                 .responseDecodable(of: NaverBookResponseDTO.self) { response in
                     switch response.result {
                     case .success(let value):
-                        print(value)
+                        handler(.success(value))
                     case .failure(let error):
-                        print(error)
+                        handler(.failure(.networkError))
                     }
                 }
         } catch {
@@ -84,9 +84,25 @@ extension BookNetworkService {
             return URLRequest(url: URL(string: "")!)
         }
     }
+    
+    private func makeRequestWithRouter(apiType: SearchBookRouter,
+                                       params: BookRequestProtocol) -> URLRequest {
+        do {
+            return try apiType.asURLRequest()
+//            switch apiType {
+//            case .naver:
+//                return try SearchBookRouter.naver(param: params as! NaverBookRequestParameters).asURLRequest()
+//            case .kakao:
+//                return try SearchBookRouter.kakao(param: params as! KakaoBookRequestParameters).asURLRequest()
+//            }
+        } catch {
+            print("UrlRequest Error : \(error)")
+            return URLRequest(url: URL(string: "")!)
+        }
+    }
 }
 
 enum SearchBookError: Error {
-    
+    case networkError
 }
 

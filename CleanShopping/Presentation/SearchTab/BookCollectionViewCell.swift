@@ -10,6 +10,7 @@ import SnapKit
 import Kingfisher
 
 final class BookCollectionViewCell: UICollectionViewCell {
+    static let id = "BookCollectionViewCell"
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()

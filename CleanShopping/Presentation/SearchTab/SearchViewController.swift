@@ -10,6 +10,8 @@ import SnapKit
 
 final class SearchViewController: BaseViewController {
     
+    private var dataSource: UICollectionViewDiffableDataSource<SearchBookSection, BookSectionItem>! = nil
+    
     // 검색창, 검색 결과 리스트, 상세화면
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -20,15 +22,18 @@ final class SearchViewController: BaseViewController {
     }()
     
     private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: SearchViewController.layout)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.delegate = self
-        collectionView.dataSource = self
         return collectionView
     }()
+    
+    var query = ""
+    var page = 1
+    var isEnd = false
+    var bookList = [Book]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        naverSearchTest(query: "일론")
     }
     
     override func setHierarchy() {
@@ -58,50 +63,129 @@ final class SearchViewController: BaseViewController {
 
 // Search Bar
 extension SearchViewController: UISearchBarDelegate {
-    
+    // query 입력
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        page = 1
+        isEnd = false
+        naverSearchTest(api: .naver, query: query, page: page)
+    }
 }
 
+// CollectionView Delegate & DataSource
 extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        10
+        return bookList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return UICollectionViewCell()
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as! BookCollectionViewCell
+        let book = bookList[indexPath.row]
+        cell.configureData(book: book)
+        return cell
     }
     
+    private func createLayout() -> UICollectionViewLayout {
+        return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+            let section = SearchBookSection.allCases[sectionIndex]
+            
+            switch section {
+            case .searchResultSection:
+                return self.todoSection(layoutEnvironment: layoutEnvironment)
+            }
+        }
+    }
+    
+    private func configureDataSource() {
+        let bookSearchResultRegistration = UICollectionView.CellRegistration<BookCollectionViewCell, BookSectionItem> { (cell, indexPath, item) in
+            if case let .searchResult(book) = item {
+                cell.configureData(book: book)
+            }
+        }
+        
+        dataSource = UICollectionViewDiffableDataSource<SearchBookSection, BookSectionItem>(collectionView: collectionView) {
+            (collectionView: UICollectionView, indexPath: IndexPath, identifier: BookSectionItem) -> UICollectionViewCell? in
+            switch identifier {
+            case .searchResult:
+                return collectionView.dequeueConfiguredReusableCell(using: bookSearchResultRegistration, for: indexPath, item: identifier)
+            }
+            
+        }
+        
+        var snapshot = NSDiffableDataSourceSnapshot<SearchBookSection, BookSectionItem>()
+        snapshot.appendSections(SearchBookSection.allCases)
+        let bookSearchResult = [Book]().map { BookSectionItem.searchResult($0) }
+        snapshot.appendItems(bookSearchResult, toSection: .searchResultSection)
+        
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
     
 }
 
-// Network
+// CollectionView Prefetch
+extension SearchViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            if indexPath.item == bookList.count - 2 && !isEnd {
+                page += 1
+                naverSearchTest(api: .naver ,query: query, page: page)
+            }
+        }
+    }
+    
+}
+
+// Network Request
 extension SearchViewController {
     
-    private func kakaoSearchTest(query: String) {
-        let params = KakaoBookRequestParameters(query: query, sort: .accuracy, page: 1)
-        BookNetworkService.shared.searhKakaoBooks(params: params) { response in
+    private func applyResponse(response: BookResponse) {
+        self.isEnd = response.isEnd
+        
+        
+    }
+    
+    private func applyBookList(books: [Book]) {
+        if page == 1 {
+            self.bookList = books
+        } else {
+            bookList.append(contentsOf: books)
+        }
+    }
+    
+    private func kakaoSearchTest(query: String, page: Int) {
+        let params = KakaoBookRequestParameters(query: query, sort: .accuracy, page: page)
+        BookNetworkService.shared.searhKakaoBooks(params: params) { [weak self] response in
+            guard let self else { return }
             switch response {
             case .success(let success):
-                print(success)
+                let response = success.toDomain()
+                self.applyResponse(response: response)
             case .failure(let failure):
                 print(failure)
             }
         }
     }
     
-    private func naverSearchTest(query: String) {
-        let params = NaverBookRequestParameters(query: query, start: 1, sort: .sim)
-        BookNetworkService.shared.searhNaverBooks(params: params) { response in
+    private func naverSearchTest(api: BookAPI, query: String, page: Int) {
+        let params2 = BookRequest(api: api,
+                                  query: query,
+                                  page: page).toDTO() as! NaverBookRequestParameters
+//        let params = NaverBookRequestParameters(query: query, start: page, sort: .sim)
+        BookNetworkService.shared.searhNaverBooks(params: params2) { [weak self] response in
+            guard let self else { return }
             switch response {
             case .success(let success):
-                print(success)
+                let bookResponse = success.toDomain()
+                self.bookList.append(contentsOf: bookResponse.books)
             case .failure(let failure):
                 print(failure)
+                self.bookList = []
             }
         }
     }
             
 }
 
+// Layout
 extension SearchViewController {
     static let layout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -110,4 +194,11 @@ extension SearchViewController {
         layout.minimumInteritemSpacing = 10
         return layout
     }()
+    
+    private func todoSection(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+        let config = UICollectionLayoutListConfiguration(appearance: .plain)
+        let section = NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
+        section.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+        return section
+    }
 }
