@@ -7,11 +7,6 @@
 
 import Foundation
 
-enum BookAPI {
-    case naver
-    case kakao
-}
-
 enum NaverBookAPI {
     static let baseURL = "https://openapi.naver.com"
     static let idHeader = "X-Naver-Client-Id"

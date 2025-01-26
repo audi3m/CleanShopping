@@ -8,24 +8,36 @@
 import Foundation
 import Alamofire
 
+enum BookAPI {
+    case naver
+    case kakao
+    
+    var decodingType: Decodable.Type {
+        switch self {
+        case .naver:
+            return NaverBookResponseDTO.self
+        case .kakao:
+            return KakaoBookResponseDTO.self
+        }
+    }
+}
+
 final class BookNetworkService {
     
     static let shared = BookNetworkService()
     private init() { }
     
-    func searchBooks<T: Decodable>(model: T.Type,
-                                   api: BookAPI,
-                                   params: BookRequestProtocol,
-                                   handler: @escaping (Result<T, Error>) -> Void) {
-        let request = makeRequest(apiType: api, params: params)
+    func searchBooks(bookRequest: BookRequest,
+                     handler: @escaping (Result<BookResponseProtocol, SearchBookError>) -> Void) {
+        let request = makeRequest(bookRequest: bookRequest)
         AF.request(request)
             .validate(statusCode: 200...299)
-            .responseDecodable(of: T.self) { response in
+            .responseDecodable(of: bookRequest.api.decodingType) { response in
                 switch response.result {
                 case .success(let data):
                     handler(.success(data))
                 case .failure(let error):
-                    handler(.failure(error))
+                    handler(.failure(.networkError))
                 }
             }
     }
@@ -40,7 +52,7 @@ final class BookNetworkService {
                     switch response.result {
                     case .success(let value):
                         handler(.success(value))
-                    case .failure(let error):
+                    case .failure:
                         handler(.failure(.networkError))
                     }
                 }
@@ -70,10 +82,10 @@ final class BookNetworkService {
 }
 
 extension BookNetworkService {
-    private func makeRequest(apiType: BookAPI,
-                             params: BookRequestProtocol) -> URLRequest {
+    private func makeRequest(bookRequest: BookRequest) -> URLRequest {
         do {
-            switch apiType {
+            let params = bookRequest.toDTO()
+            switch bookRequest.api {
             case .naver:
                 return try SearchBookRouter.naver(param: params as! NaverBookRequestParameters).asURLRequest()
             case .kakao:
@@ -85,21 +97,6 @@ extension BookNetworkService {
         }
     }
     
-    private func makeRequestWithRouter(apiType: SearchBookRouter,
-                                       params: BookRequestProtocol) -> URLRequest {
-        do {
-            return try apiType.asURLRequest()
-//            switch apiType {
-//            case .naver:
-//                return try SearchBookRouter.naver(param: params as! NaverBookRequestParameters).asURLRequest()
-//            case .kakao:
-//                return try SearchBookRouter.kakao(param: params as! KakaoBookRequestParameters).asURLRequest()
-//            }
-        } catch {
-            print("UrlRequest Error : \(error)")
-            return URLRequest(url: URL(string: "")!)
-        }
-    }
 }
 
 enum SearchBookError: Error {
