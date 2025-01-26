@@ -27,11 +27,7 @@ final class SearchViewController: BaseViewController {
         return collectionView
     }()
     
-    var api = BookAPI.naver
-    var query = ""
-    var page = 1
-    var isEnd = false
-    var bookList = [Book]()
+    var searchBookResult = [Book]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,21 +61,19 @@ final class SearchViewController: BaseViewController {
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        query = searchBar.text ?? ""
-        page = 1
-        isEnd = false
+        
     }
 }
 
 // CollectionView Delegate & DataSource
 extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return bookList.count
+        searchBookResult.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as! BookCollectionViewCell
-        let book = bookList[indexPath.row]
+        let book = searchBookResult[indexPath.row]
         cell.configureData(book: book)
         return cell
     }
@@ -131,7 +125,7 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
 extension SearchViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
-            if indexPath.item == bookList.count - 2 && !isEnd {
+            if indexPath.item == searchBookResult.count - 2 {
                 
                 
             }
@@ -151,13 +145,6 @@ extension SearchViewController {
 
 // Layout
 extension SearchViewController {
-    static let layout: UICollectionViewFlowLayout = {
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 100, height: 100)
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
-        return layout
-    }()
     
     private func searchBookResultSection(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
         let config = UICollectionLayoutListConfiguration(appearance: .plain)
@@ -165,4 +152,5 @@ extension SearchViewController {
         section.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         return section
     }
+    
 }
