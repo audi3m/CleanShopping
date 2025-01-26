@@ -6,14 +6,8 @@
 //
 
 import Foundation
-
-protocol SearchViewModelProtocol {
-    var query: String { get set }
-    var page: Int { get set }
-    
-    func searchBooks()
-    func saveBook()
-}
+import RxSwift
+import RxCocoa
 
 final class SearchBookViewModel {
     
@@ -24,11 +18,24 @@ final class SearchBookViewModel {
     
 }
 
+// Search
 extension SearchBookViewModel {
+    
     func searchBook() {
         
     }
     
+    
+    
+    
+}
+
+
+
+
+
+// Save
+extension SearchBookViewModel {
     func saveBook() {
         
     }

@@ -6,7 +6,10 @@
 //
 
 import Foundation
+<<<<<<< HEAD
 
 enum KakaoBookResponseError: Error {
     case responseError
 }
+=======
+>>>>>>> views
