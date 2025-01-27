@@ -18,6 +18,6 @@ final class SearchBookRepository {
 }
 
 extension SearchBookRepository {
-    func search
+    func search() { }
     
 }
