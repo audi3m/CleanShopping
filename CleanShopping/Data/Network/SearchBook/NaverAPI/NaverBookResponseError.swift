@@ -6,10 +6,7 @@
 //
 
 import Foundation
-<<<<<<< HEAD
 
 enum NaverBookResponseError: Error {
     case responseError
 }
-=======
->>>>>>> views

@@ -6,27 +6,18 @@
 //
 
 import Foundation
-<<<<<<< HEAD
 
 final class SearchBookRepository {
     static let shared = SearchBookRepository()
     
-    private let networkManager: BookNetworkService
+    private let networkManager: BookNetworkManager
     
-    private init(networkManager: BookNetworkService = BookNetworkService.shared) {
+    private init(networkManager: BookNetworkManager = BookNetworkManager.shared) {
         self.networkManager = networkManager
     }
 }
 
 extension SearchBookRepository {
-    func search() {
-        networkManager.searchBooks(model: <#T##Decodable.Type#>,
-                                   api: <#T##BookAPI#>,
-                                   params: <#T##any BookRequestProtocol#>) { <#Result<Decodable, SearchBookError>#> in
-            <#code#>
-        }
-    }
+    func search
     
 }
-=======
->>>>>>> views
