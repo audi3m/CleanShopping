@@ -18,6 +18,29 @@ final class SearchBookRepository {
 }
 
 extension SearchBookRepository {
-    func search
+    
+    func searchKakaoBook(params: KakaoBookRequestParameters) {
+        networkManager.request(target: .kakao(param: params),
+                               of: KakaoBookResponseDTO.self) { result in
+            switch result {
+            case .success(let success):
+                print(success)
+            case .failure(let failure):
+                print(failure)
+            }
+        }
+    }
+    
+    func searchNaverBook(params: NaverBookRequestParameters) {
+        networkManager.request(target: .naver(param: params),
+                               of: NaverBookResponseDTO.self) { result in
+            switch result {
+            case .success(let success):
+                print(success)
+            case .failure(let failure):
+                print(failure)
+            }
+        }
+    }
     
 }
