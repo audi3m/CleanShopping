@@ -13,7 +13,7 @@ struct NaverBookRequestParameters: BookRequestProtocol {
     let start: Int // 시작 번호
     let sort: NaverBookSortOptions
     
-    init(query: String, display: Int = 20, start: Int, sort: NaverBookSortOptions) {
+    init(query: String, display: Int = 20, start: Int, sort: NaverBookSortOptions = .sim) {
         self.query = query
         self.display = display
         self.start = start

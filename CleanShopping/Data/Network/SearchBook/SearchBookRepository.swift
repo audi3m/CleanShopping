@@ -19,7 +19,8 @@ final class SearchBookRepository {
 
 extension SearchBookRepository {
     
-    func searchKakaoBook(params: KakaoBookRequestParameters) {
+    func searchKakaoBook(bookRequest: BookRequest) {
+        let params = KakaoBookRequestParameters(query: bookRequest.query, page: bookRequest.page)
         networkManager.request(target: .kakao(param: params),
                                of: KakaoBookResponseDTO.self) { result in
             switch result {
@@ -31,7 +32,8 @@ extension SearchBookRepository {
         }
     }
     
-    func searchNaverBook(params: NaverBookRequestParameters) {
+    func searchNaverBook(bookRequest: BookRequest) {
+        let params = NaverBookRequestParameters(query: bookRequest.query, start: bookRequest.page)
         networkManager.request(target: .naver(param: params),
                                of: NaverBookResponseDTO.self) { result in
             switch result {
