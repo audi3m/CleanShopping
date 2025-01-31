@@ -63,13 +63,13 @@ extension SearchBookRouter: TargetType {
                 URLQueryItem(name: "query", value: param.query),
                 URLQueryItem(name: "display", value: "\(param.display)"),
                 URLQueryItem(name: "start", value: "\(param.start)"),
-                URLQueryItem(name: "sort", value: param.sort.rawValue)
+                URLQueryItem(name: "sort", value: param.sort.asString)
             ]
             return parameters
         case .kakao(let param):
             let parameters = [
                 URLQueryItem(name: "query", value: param.query),
-                URLQueryItem(name: "sort", value: param.sort.rawValue),
+                URLQueryItem(name: "sort", value: param.sort.asString),
                 URLQueryItem(name: "page", value: "\(param.page)"),
                 URLQueryItem(name: "size", value: "\(param.size)"),
 //                URLQueryItem(name: "target", value: param.target.rawValue)

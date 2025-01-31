@@ -7,11 +7,16 @@
 
 import Foundation
 
+enum SortOption: Int {
+    case accuracy
+    case date
+}
+
 struct BookRequest {
     let api: BookAPI
     let query: String
     let page: Int
-//    let sort: SortOption
+    let sort: SortOption
 }
 
 extension BookRequest {
@@ -21,17 +26,12 @@ extension BookRequest {
             return NaverBookRequestParameters(query: query,
                                               display: 20,
                                               start: 1 + (page - 1) * 20,
-                                              sort: .sim)
+                                              sort: NaverBookSortOptions(rawValue: sort.rawValue) ?? .sim)
         case .kakao:
             return KakaoBookRequestParameters(query: query,
-                                              sort: .accuracy,
+                                              sort: KakaoBookSortOptions(rawValue: sort.rawValue) ?? .accuracy,
                                               page: page,
                                               size: 20)
         }
     }
 }
-
-//enum SortOption {
-//    case date
-//    case accuracy
-//}

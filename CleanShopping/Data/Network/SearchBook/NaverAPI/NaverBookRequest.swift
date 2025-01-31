@@ -21,7 +21,16 @@ struct NaverBookRequestParameters: BookRequestProtocol {
     }
 }
 
-enum NaverBookSortOptions: String {
-    case sim = "sim"
-    case date = "date"
+enum NaverBookSortOptions: Int {
+    case sim
+    case date
+    
+    var asString: String {
+        switch self {
+        case .sim:
+            return "sim"
+        case .date:
+            return "date"
+        }
+    }
 }

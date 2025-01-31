@@ -7,6 +7,8 @@
 
 import Foundation
 
+protocol SortOptionDTO { }
+
 struct KakaoBookRequestParameters: BookRequestProtocol {
     let query: String
     let sort: KakaoBookSortOptions
@@ -21,7 +23,16 @@ struct KakaoBookRequestParameters: BookRequestProtocol {
     }
 }
 
-enum KakaoBookSortOptions: String {
+enum KakaoBookSortOptions: Int {
     case accuracy
     case latest
+    
+    var asString: String {
+        switch self {
+        case .accuracy:
+            return "accuracy"
+        case .latest:
+            return "latest"
+        }
+    }
 }
