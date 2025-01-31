@@ -139,7 +139,7 @@ extension SearchViewController: UICollectionViewDataSourcePrefetching {
 // Network Request
 extension SearchViewController {
     
-    func getSearchResults(api: BookAPI, query: String, page: Int = 1, sort: ) {
+    func getSearchResults(api: BookAPI, query: String, page: Int = 1, sort: SortOption) {
         
     }
     
