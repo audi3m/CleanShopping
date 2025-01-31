@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum BookAPI {
+    case naver
+    case kakao
+}
+
 enum SortOption: Int {
     case accuracy
     case date
