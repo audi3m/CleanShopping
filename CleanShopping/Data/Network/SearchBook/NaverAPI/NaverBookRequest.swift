@@ -13,7 +13,7 @@ struct NaverBookRequestParameters: BookRequestProtocol {
     let start: Int // 시작 번호
     let sort: NaverBookSortOptions
     
-    init(query: String, display: Int = 20, start: Int, sort: NaverBookSortOptions) {
+    init(query: String, display: Int = 20, start: Int, sort: NaverBookSortOptions = .sim) {
         self.query = query
         self.display = display
         self.start = start
@@ -21,7 +21,16 @@ struct NaverBookRequestParameters: BookRequestProtocol {
     }
 }
 
-enum NaverBookSortOptions: String {
-    case sim = "sim"
-    case date = "date"
+enum NaverBookSortOptions: Int {
+    case sim
+    case date
+    
+    var asString: String {
+        switch self {
+        case .sim:
+            return "sim"
+        case .date:
+            return "date"
+        }
+    }
 }

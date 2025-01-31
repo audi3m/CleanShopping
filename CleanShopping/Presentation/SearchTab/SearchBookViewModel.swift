@@ -10,7 +10,13 @@ import RxSwift
 import RxCocoa
 
 final class SearchBookViewModel {
+    let disposeBag: DisposeBag
+    let networkManager: BookNetworkManager
     
+    init(disposeBag: DisposeBag, networkManager: BookNetworkManager) {
+        self.disposeBag = disposeBag
+        self.networkManager = networkManager
+    }
     
     
     
@@ -20,12 +26,6 @@ final class SearchBookViewModel {
 
 // Search
 extension SearchBookViewModel {
-    
-    func searchBook() {
-        
-    }
-    
-    
     
     
 }

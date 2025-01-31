@@ -32,6 +32,7 @@ final class SearchViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureDataSource()
+        
     }
     
     override func setHierarchy() {
@@ -63,6 +64,7 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
     }
+    
 }
 
 // CollectionView Delegate & DataSource
@@ -137,7 +139,9 @@ extension SearchViewController: UICollectionViewDataSourcePrefetching {
 // Network Request
 extension SearchViewController {
     
-    
+    func getSearchResults(api: BookAPI, query: String, page: Int = 1, sort: SortOption) {
+        
+    }
     
     
             
