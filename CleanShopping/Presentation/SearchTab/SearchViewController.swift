@@ -28,11 +28,11 @@ final class SearchViewController: BaseViewController {
     }()
     
     var searchBookResult = [Book]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureDataSource()
-        
+        reBind()
     }
     
     override func setHierarchy() {
@@ -58,7 +58,14 @@ final class SearchViewController: BaseViewController {
 
 }
 
-// Search Bar
+// Rx
+extension SearchViewController {
+    private func reBind() {
+        
+    }
+}
+
+// Network
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -139,12 +146,18 @@ extension SearchViewController: UICollectionViewDataSourcePrefetching {
 // Network Request
 extension SearchViewController {
     
-    func getSearchResults(api: BookAPI, query: String, page: Int = 1, sort: SortOption) {
-        
+    func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
+        let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
+        let bookResponse = try await SearchBookRepository.shared.newSearchBook(bookRequest: bookRequest)
+        return bookResponse
+    }
+
+    private func networkTest() async throws -> BookResponse {
+        let bookRequest = BookRequest(api: .kakao, query: "일론", page: 1, sort: .accuracy)
+        let bookResponse = try await SearchBookRepository.shared.newSearchBook(bookRequest: bookRequest)
+        return bookResponse
     }
     
-    
-            
 }
 
 // Layout
