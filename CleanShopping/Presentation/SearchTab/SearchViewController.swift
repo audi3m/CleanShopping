@@ -12,8 +12,6 @@ import RxCocoa
 
 final class SearchViewController: BaseViewController {
     
-    private var dataSource: UICollectionViewDiffableDataSource<SearchBookSection, BookSectionItem>! = nil
-    
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.backgroundImage = UIImage()
@@ -27,12 +25,14 @@ final class SearchViewController: BaseViewController {
         return collectionView
     }()
     
+    private let disposeBag = DisposeBag()
+    private let viewModel = SearchBookViewModel(networkManager: BookNetworkManager.shared)
+    
     var searchBookResult = [Book]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureDataSource()
-        
+        rxBind()
     }
     
     override func setHierarchy() {
@@ -56,6 +56,13 @@ final class SearchViewController: BaseViewController {
         navigationItem.title = "도서 검색"
     }
 
+}
+
+// Rx
+extension SearchViewController {
+    private func rxBind() {
+        
+    }
 }
 
 // Search Bar
@@ -89,36 +96,6 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 return self.searchBookResultSection(layoutEnvironment: layoutEnvironment)
             }
         }
-    }
-    
-    private func configureDataSource() {
-        let bookSearchResultRegistration = UICollectionView.CellRegistration<BookCollectionViewCell, BookSectionItem> { (cell, indexPath, item) in
-            if case let .searchResult(book) = item {
-                cell.configureData(book: book)
-            }
-        }
-        
-        dataSource = UICollectionViewDiffableDataSource<SearchBookSection, BookSectionItem>(collectionView: collectionView) {
-            (collectionView: UICollectionView, indexPath: IndexPath, identifier: BookSectionItem) -> UICollectionViewCell? in
-            switch identifier {
-            case .searchResult:
-                return collectionView.dequeueConfiguredReusableCell(using: bookSearchResultRegistration, for: indexPath, item: identifier)
-            }
-        }
-        
-        var snapshot = NSDiffableDataSourceSnapshot<SearchBookSection, BookSectionItem>()
-        snapshot.appendSections(SearchBookSection.allCases)
-        let bookSearchResult = [Book]().map { BookSectionItem.searchResult($0) }
-        snapshot.appendItems(bookSearchResult, toSection: .searchResultSection)
-        
-        dataSource.apply(snapshot, animatingDifferences: false)
-    }
-    
-    private func appendBooks(books: [Book]) {
-        var currentSnapshot = dataSource.snapshot()
-        let items = books.map { BookSectionItem.searchResult($0) }
-        currentSnapshot.appendItems(items, toSection: .searchResultSection)
-        dataSource.apply(currentSnapshot, animatingDifferences: true)
     }
     
 }
