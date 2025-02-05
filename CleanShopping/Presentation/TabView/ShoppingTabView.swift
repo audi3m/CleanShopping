@@ -20,7 +20,7 @@ final class HomeTabBarController: UITabBarController {
 
 extension HomeTabBarController {
     private func configureTabBar() {
-        view.backgroundColor = .white
+        tabBar.backgroundColor = .secondarySystemBackground
         tabBar.tintColor = .black
     }
     
