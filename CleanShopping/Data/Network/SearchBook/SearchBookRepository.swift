@@ -23,8 +23,7 @@ extension SearchBookRepository {
         switch bookRequest.api {
         case .naver:
             let params = bookRequest.toDTO() as! NaverBookRequestParameters
-            networkManager.request(target: .naver(param: params),
-                                   of: NaverBookResponseDTO.self) { result in
+            networkManager.request(target: .naver(param: params), of: NaverBookResponseDTO.self) { result in
                 switch result {
                 case .success(let value):
                     handler(.success(value.toDomain()))
@@ -34,8 +33,7 @@ extension SearchBookRepository {
             }
         case .kakao:
             let params = bookRequest.toDTO() as! KakaoBookRequestParameters
-            networkManager.request(target: .kakao(param: params),
-                                   of: KakaoBookResponseDTO.self) { result in
+            networkManager.request(target: .kakao(param: params), of: KakaoBookResponseDTO.self) { result in
                 switch result {
                 case .success(let value):
                     handler(.success(value.toDomain()))
