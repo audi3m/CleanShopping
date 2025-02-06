@@ -191,7 +191,6 @@ extension SearchViewController {
         layout.minimumInteritemSpacing = 10
         layout.minimumLineSpacing = 10
         layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        //        layout.itemSize = CGSize(width: collectionView.frame.width, height: 167)
         return layout
     }
     
@@ -261,10 +260,11 @@ extension SearchViewController {
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
-    private func addItem(newItems: [Book]) {
+    private func addItems(newItems: [Book]) {
         var snapshot = dataSource.snapshot()
         searchBookResult.append(contentsOf: newItems)
-        snapshot.appendItems(newItems, toSection: .list)
+        let items = newItems.map { SearchBookSectionItem.listData($0) }
+        snapshot.appendItems(items, toSection: .list)
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
