@@ -7,9 +7,9 @@
 
 import Foundation
 
-enum BookAPI {
-    case naver
-    case kakao
+enum BookAPI: String, CaseIterable {
+    case naver = "Naver"
+    case kakao = "Kakao"
 }
 
 enum SortOption: Int {

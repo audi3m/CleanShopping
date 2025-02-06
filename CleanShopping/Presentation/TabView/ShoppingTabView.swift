@@ -12,19 +12,30 @@ final class HomeTabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        configureTabBar()
+        setTabItems()
+    }
+    
+}
+
+extension HomeTabBarController {
+    private func configureTabBar() {
+        tabBar.backgroundColor = .secondarySystemBackground
         tabBar.tintColor = .black
-        
+    }
+    
+    private func setTabItems() {
         let viewControllers = TabItems.allCases.map { tabItem -> UIViewController in
             let viewController = tabItem.viewController
-            viewController.tabBarItem = UITabBarItem(title: tabItem.rawValue,
-                                                     image: tabItem.icon,
-                                                     tag: tabItem.tag)
+            viewController.tabBarItem = UITabBarItem(title: tabItem.rawValue, image: tabItem.icon, tag: tabItem.tag)
             return viewController
         }
         
         self.viewControllers = viewControllers
     }
+}
+
+extension HomeTabBarController {
     
     private enum TabItems: String, CaseIterable {
         case search = "검색"

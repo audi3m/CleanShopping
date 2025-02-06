@@ -22,7 +22,11 @@ struct Book: Identifiable, Hashable {
 
 extension Book {
     var info: String {
-        return "저자" + author + " | " + "출판" + publisher + " | " + pubdate
+        return "저자 " + author + " | " + "출판 " + publisher + " | " + pubdate
+    }
+    
+    var info2: String {
+        return "저자 " + author + "\n" + "출판 " + publisher + "\n" + pubdate.prefix(10)
     }
     
     var price: String {
