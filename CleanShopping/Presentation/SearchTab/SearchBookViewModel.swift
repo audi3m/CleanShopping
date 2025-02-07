@@ -44,6 +44,11 @@ extension SearchBookViewModel {
 // Search
 extension SearchBookViewModel {
     
+    func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
+        let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
+        let bookResponse = try await SearchBookRepository.shared.newSearchBook(bookRequest: bookRequest)
+        return bookResponse
+    }
     
 }
 

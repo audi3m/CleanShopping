@@ -19,31 +19,42 @@ final class SearchBookRepository {
 
 extension SearchBookRepository {
     
-    func searchBook(bookRequest: BookRequest) {
+    func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, Error>) -> Void) {
         switch bookRequest.api {
         case .naver:
             let params = bookRequest.toDTO() as! NaverBookRequestParameters
-            networkManager.request(target: .naver(param: params),
-                                   of: NaverBookResponseDTO.self) { result in
+            networkManager.request(target: .naver(param: params), of: NaverBookResponseDTO.self) { result in
                 switch result {
                 case .success(let value):
-                    print(value.toDomain())
+                    handler(.success(value.toDomain()))
                 case .failure(let error):
-                    print(error)
+                    handler(.failure(error))
                 }
             }
         case .kakao:
             let params = bookRequest.toDTO() as! KakaoBookRequestParameters
-            networkManager.request(target: .kakao(param: params),
-                                   of: KakaoBookResponseDTO.self) { result in
+            networkManager.request(target: .kakao(param: params), of: KakaoBookResponseDTO.self) { result in
                 switch result {
                 case .success(let value):
-                    print(value.toDomain())
+                    handler(.success(value.toDomain()))
                 case .failure(let error):
-                    print(error)
+                    handler(.failure(error))
                 }
             }
         }
-    } 
+    }
+    
+    func newSearchBook(bookRequest: BookRequest) async throws -> BookResponse {
+        switch bookRequest.api {
+        case .naver:
+            let params = bookRequest.toDTO() as! NaverBookRequestParameters
+            let response = try await networkManager.newRequest(target: .naver(param: params), of: NaverBookResponseDTO.self)
+            return response.toDomain()
+        case .kakao:
+            let params = bookRequest.toDTO() as! KakaoBookRequestParameters
+            let response = try await networkManager.newRequest(target: .kakao(param: params), of: KakaoBookResponseDTO.self)
+            return response.toDomain()
+        }
+    }
     
 }

@@ -92,7 +92,14 @@ extension SearchViewController {
     }
 }
 
-// Search Bar
+// Rx
+extension SearchViewController {
+    private func reBind() {
+        
+    }
+}
+
+// Network
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
