@@ -12,6 +12,7 @@ final class BookApiSelectionCollectionViewCell: UICollectionViewCell {
     
     private let apiLabel: UILabel = {
         let label = UILabel()
+        label.backgroundColor = .lightGray
         return label
     }()
     
@@ -35,7 +36,7 @@ extension BookApiSelectionCollectionViewCell {
     
     private func configureUI() {
         apiLabel.snp.makeConstraints { make in
-            
+            make.edges.equalToSuperview().inset(10)
         }
     }
     

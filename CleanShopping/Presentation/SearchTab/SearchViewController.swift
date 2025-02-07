@@ -20,10 +20,11 @@ final class SearchViewController: BaseViewController {
         return searchBar
     }()
     private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout2())
         collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: "BookCollectionViewCell")
+        collectionView.register(BookApiSelectionCollectionViewCell.self, forCellWithReuseIdentifier: "BookApiSelectionCollectionViewCell")
         collectionView.delegate = self
-        collectionView.dataSource = self
+//        collectionView.dataSource = self
         collectionView.prefetchDataSource = self
         return collectionView
     }()
@@ -40,15 +41,13 @@ final class SearchViewController: BaseViewController {
     var sort = SortOption.accuracy
     
     var isEndPage = false
-    var searchBookResult = [Book]() {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
+    var searchBookResult = [Book]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         rxBind()
+        configureDataSource()
+        initialSnapshot()
         
         Task {
             do {
@@ -115,19 +114,21 @@ extension SearchViewController: UISearchBarDelegate {
 }
 
 // CollectionView Delegate & DataSource
-extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension SearchViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         searchBookResult.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as! BookCollectionViewCell
-        let book = searchBookResult[indexPath.row]
-        cell.configureData(book: book)
-        return cell
-    }
-    
 }
+
+//extension SearchViewController: UICollectionViewDataSource {
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as! BookCollectionViewCell
+//        let book = searchBookResult[indexPath.row]
+//        cell.configureData(book: book)
+//        return cell
+//    }
+//}
 
 // CollectionView Prefetch
 extension SearchViewController: UICollectionViewDataSourcePrefetching {
@@ -135,9 +136,9 @@ extension SearchViewController: UICollectionViewDataSourcePrefetching {
         for indexPath in indexPaths {
             if indexPath.item == searchBookResult.count - 2 && !isEndPage {
                 print("prefetch page \(page)")
+                page += 1
                 Task {
                     do {
-                        page += 1
                         let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
                         isEndPage = bookResponse.isEnd
                         searchBookResult.append(contentsOf: bookResponse.books)
@@ -170,12 +171,11 @@ extension SearchViewController {
         isEndPage = false
         searchBookResult = []
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
-        collectionView.reloadData()
     }
     
 }
 
-// Layout
+// Layout 1
 extension SearchViewController {
     
     private func searchBookResultSection(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
@@ -196,7 +196,7 @@ extension SearchViewController {
     
 }
 
-// Compositional Layout
+// Compositional Layout 2
 extension SearchViewController {
     
     private func createLayout2() -> UICollectionViewCompositionalLayout {
@@ -256,7 +256,8 @@ extension SearchViewController {
         let filterItems = BookAPI.allCases.map { SearchBookSectionItem.filterOption($0) }
         snapshot.appendItems(filterItems, toSection: .filter)
         
-//        snapshot.appendItems(listItems, toSection: .list)
+        let items = searchBookResult.map { SearchBookSectionItem.listData($0) }
+        snapshot.appendItems(items, toSection: .list)
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
