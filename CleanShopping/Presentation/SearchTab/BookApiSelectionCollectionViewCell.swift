@@ -6,12 +6,20 @@
 //
 
 import UIKit
+import SnapKit
 
 final class BookApiSelectionCollectionViewCell: UICollectionViewCell {
     static let id = "BookApiSelectionCollectionViewCell"
     
+    private let roundedBackground: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray6
+        view.layer.cornerRadius = 8
+        return view
+    }()
     private let apiLabel: UILabel = {
         let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
         return label
     }()
     
@@ -29,13 +37,17 @@ final class BookApiSelectionCollectionViewCell: UICollectionViewCell {
 
 extension BookApiSelectionCollectionViewCell {
     private func configureHierarchy() {
-        let views = [apiLabel]
-        views.forEach { contentView.addSubview($0) }
+        contentView.addSubview(roundedBackground)
+        roundedBackground.addSubview(apiLabel)
     }
     
     private func configureUI() {
+        roundedBackground.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         apiLabel.snp.makeConstraints { make in
-            
+            make.verticalEdges.equalToSuperview().inset(8)
+            make.horizontalEdges.equalToSuperview().inset(12)
         }
     }
     
