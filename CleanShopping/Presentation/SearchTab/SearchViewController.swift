@@ -20,12 +20,13 @@ final class SearchViewController: BaseViewController {
         return searchBar
     }()
     private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout2())
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: "BookCollectionViewCell")
         collectionView.register(BookApiSelectionCollectionViewCell.self, forCellWithReuseIdentifier: "BookApiSelectionCollectionViewCell")
         collectionView.delegate = self
-//        collectionView.dataSource = self
         collectionView.prefetchDataSource = self
+        collectionView.keyboardDismissMode = .onDrag
+        collectionView.backgroundColor = .white
         return collectionView
     }()
     
@@ -35,7 +36,7 @@ final class SearchViewController: BaseViewController {
     private let viewModel = SearchBookViewModel(networkManager: BookNetworkManager.shared)
     private let searchBookRepository = SearchBookRepository.shared
     
-    var api = BookAPI.kakao
+    var api = BookAPI.naver
     var query = ""
     var page = 1
     var sort = SortOption.accuracy
@@ -48,18 +49,7 @@ final class SearchViewController: BaseViewController {
         rxBind()
         configureDataSource()
         initialSnapshot()
-        
-        Task {
-            do {
-                let bookResponse = try await getSearchResults(api: .kakao, query: "일론", page: 1, sort: .accuracy)
-                isEndPage = bookResponse.isEnd
-                searchBookResult.append(contentsOf: bookResponse.books)
-                dump(searchBookResult)
-            } catch {
-                print("Error fetching next page: \(error)")
-            }
-        }
-        
+        setupNavigationBarMenu()
     }
     
     override func setHierarchy() {
@@ -70,7 +60,7 @@ final class SearchViewController: BaseViewController {
     override func setLayout() {
         searchBar.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
-            make.horizontalEdges.equalToSuperview().inset(10)
+            make.horizontalEdges.equalToSuperview()
         }
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(searchBar.snp.bottom)
@@ -92,14 +82,7 @@ extension SearchViewController {
     }
 }
 
-// Rx
-extension SearchViewController {
-    private func reBind() {
-        
-    }
-}
-
-// Network
+// Search Bar
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -108,10 +91,7 @@ extension SearchViewController: UISearchBarDelegate {
         Task {
             do {
                 let bookResponse = try await getSearchResults(api: api, query: searchBar.text!, page: page, sort: sort)
-                isEndPage = bookResponse.isEnd
-                searchBookResult.append(contentsOf: bookResponse.books)
-                collectionView.reloadData()
-                dump(searchBookResult)
+                appendItems(newItems: bookResponse.books)
             } catch {
                 print("Error fetching next page: \(error)")
             }
@@ -120,37 +100,25 @@ extension SearchViewController: UISearchBarDelegate {
     
 }
 
-// CollectionView Delegate & DataSource
+// CollectionView Delegate
 extension SearchViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        searchBookResult.count
-    }
+    
     
 }
-
-//extension SearchViewController: UICollectionViewDataSource {
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as! BookCollectionViewCell
-//        let book = searchBookResult[indexPath.row]
-//        cell.configureData(book: book)
-//        return cell
-//    }
-//}
 
 // CollectionView Prefetch
 extension SearchViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard !isEndPage else { return }
+        
+        let currentItemCount = dataSource.snapshot().itemIdentifiers.count
         for indexPath in indexPaths {
-            if indexPath.item == searchBookResult.count - 2 && !isEndPage {
-                print("prefetch page \(page)")
+            if indexPath.item == currentItemCount - 3 {
                 page += 1
                 Task {
                     do {
-                        let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
-                        isEndPage = bookResponse.isEnd
-                        searchBookResult.append(contentsOf: bookResponse.books)
-                        print("------ # of Books: \(searchBookResult.count) ------")
-                        //                        collectionView.reloadData()
+                        let bookResponse = try await getSearchResults(api: api, query: searchBar.text!, page: page, sort: sort)
+                        handleValidResponse(response: bookResponse)
                     } catch {
                         page -= 1
                         print("Error fetching next page: \(error)")
@@ -165,82 +133,70 @@ extension SearchViewController: UICollectionViewDataSourcePrefetching {
 // Network Request
 extension SearchViewController {
     
-    func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
+    private func handleValidResponse(response: BookResponse) {
+        isEndPage = response.isEnd
+        appendItems(newItems: response.books)
+    }
+    
+    private func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
+        guard !query.isEmpty else { return BookResponse(totalCount: 0, books: [], isEnd: true) }
         let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
         let bookResponse = try await searchBookRepository.newSearchBook(bookRequest: bookRequest)
-        isEndPage = bookResponse.isEnd
         return bookResponse
     }
     
     private func resetProperties() {
+        clearAllItems()
         query = ""
         page = 1
         isEndPage = false
-        searchBookResult = []
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
     }
     
 }
 
-// Layout 1
+// Compositional Layout & Sections
 extension SearchViewController {
     
-    private func searchBookResultSection(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+    private func createLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { [weak self] sectionIndex, layoutEnvironment in
+            guard let self else { return nil }
+            let section = SearchBookSection.allCases[sectionIndex]
+            switch section {
+            case .filter:
+                return self.createFilterSectionLayout()
+            case .list:
+                return self.createListSectionLayout(layoutEnvironment: layoutEnvironment)
+            }
+        }
+    }
+    
+    private func createFilterSectionLayout() -> NSCollectionLayoutSection {
+        let size = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: size)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .absolute(30))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .continuous
+        section.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+        section.interGroupSpacing = 10
+        
+        return section
+    }
+    
+    private func createListSectionLayout(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
         let config = UICollectionLayoutListConfiguration(appearance: .plain)
         let section = NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
         section.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         return section
     }
     
-    private func createLayout() -> UICollectionViewFlowLayout {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = 10
-        layout.minimumLineSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        return layout
-    }
-    
 }
 
-// Compositional Layout 2
+// DataSource
 extension SearchViewController {
-    
-    private func createLayout2() -> UICollectionViewCompositionalLayout {
-        return UICollectionViewCompositionalLayout { sectionIndex, _ in
-            let section = SearchBookSection.allCases[sectionIndex]
-            switch section {
-            case .filter:
-                return self.createFilterSectionLayout()
-            case .list:
-                return self.createListSectionLayout()
-            }
-        }
-    }
-    
-    private func createFilterSectionLayout() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .absolute(40))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .absolute(40))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        
-        let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .continuous
-        return section
-    }
-    
-    private func createListSectionLayout() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        
-        let section = NSCollectionLayoutSection(group: group)
-        return section
-    }
-    
     private func configureDataSource() {
         dataSource = UICollectionViewDiffableDataSource<SearchBookSection, SearchBookSectionItem>(collectionView: collectionView) { collectionView, indexPath, item in
             switch item {
@@ -263,12 +219,13 @@ extension SearchViewController {
         let filterItems = BookAPI.allCases.map { SearchBookSectionItem.filterOption($0) }
         snapshot.appendItems(filterItems, toSection: .filter)
         
-        let items = searchBookResult.map { SearchBookSectionItem.listData($0) }
-        snapshot.appendItems(items, toSection: .list)
+        let listItems = [SearchBookSectionItem]()
+        snapshot.appendItems(listItems, toSection: .list)
+        
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
-    private func addItems(newItems: [Book]) {
+    private func appendItems(newItems: [Book]) {
         var snapshot = dataSource.snapshot()
         searchBookResult.append(contentsOf: newItems)
         let items = newItems.map { SearchBookSectionItem.listData($0) }
@@ -277,10 +234,40 @@ extension SearchViewController {
     }
     
     private func clearAllItems() {
-        var snapshot = NSDiffableDataSourceSnapshot<SearchBookSection, SearchBookSectionItem>()
-        snapshot.appendSections([.filter, .list])
-//        snapshot.appendItems(filterItems, toSection: .filter)
+        var snapshot = dataSource.snapshot()
+        snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .list))
+        searchBookResult = []
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
+}
+
+// Test
+extension SearchViewController {
+    
+    private func setNavItems() {
+        let item = UIBarButtonItem(image: UIImage(systemName: "star"),
+                                   style: .plain, target: self,
+                                   action: #selector(printValues))
+        
+        navigationItem.leftBarButtonItems = [item]
+    }
+
+    @objc private func printValues() {
+        print("------------------------------------")
+        print("Query: \(searchBar.text ?? "")\nPage: \(page)\nIsEnd: \(isEndPage)\n# of List: \(searchBookResult.count)")
+        print("------------------------------------")
+    }
+    
+    private func setupNavigationBarMenu() {
+        let apiItems = BookAPI.allCases.map { apiType in
+            UIAction(title: apiType.rawValue, state: self.api == apiType ? .on : .off) { _ in
+                self.api = apiType
+                self.setupNavigationBarMenu()
+            }
+        }
+        
+        let menu = UIMenu(title: "", children: apiItems)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: api.rawValue, menu: menu)
+    }
 }

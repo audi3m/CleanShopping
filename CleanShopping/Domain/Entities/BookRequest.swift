@@ -8,8 +8,8 @@
 import Foundation
 
 enum BookAPI: String, CaseIterable {
-    case naver = "Naver"
-    case kakao = "Kakao"
+    case naver = "네이버"
+    case kakao = "카카오"
 }
 
 enum SortOption: Int {

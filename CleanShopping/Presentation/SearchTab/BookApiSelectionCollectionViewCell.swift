@@ -19,7 +19,7 @@ final class BookApiSelectionCollectionViewCell: UICollectionViewCell {
     }()
     private let apiLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .lightGray
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
         return label
     }()
     
@@ -47,7 +47,7 @@ extension BookApiSelectionCollectionViewCell {
         }
         apiLabel.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(8)
-            make.horizontalEdges.equalToSuperview().inset(6)
+            make.horizontalEdges.equalToSuperview().inset(12)
         }
     }
     
