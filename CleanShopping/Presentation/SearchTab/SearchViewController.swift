@@ -87,10 +87,11 @@ extension SearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         resetProperties()
+        query = searchBar.text ?? ""
         
         Task {
             do {
-                let bookResponse = try await getSearchResults(api: api, query: searchBar.text!, page: page, sort: sort)
+                let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
                 appendItems(newItems: bookResponse.books)
             } catch {
                 print("Error fetching next page: \(error)")
@@ -117,7 +118,7 @@ extension SearchViewController: UICollectionViewDataSourcePrefetching {
                 page += 1
                 Task {
                     do {
-                        let bookResponse = try await getSearchResults(api: api, query: searchBar.text!, page: page, sort: sort)
+                        let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
                         handleValidResponse(response: bookResponse)
                     } catch {
                         page -= 1
