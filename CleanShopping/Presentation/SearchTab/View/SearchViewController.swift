@@ -42,7 +42,6 @@ final class SearchViewController: BaseViewController {
     var sort = SortOption.accuracy
     
     var isEndPage = false
-    var searchBookResult = [Book]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -228,7 +227,6 @@ extension SearchViewController {
     
     private func appendItems(newItems: [Book]) {
         var snapshot = dataSource.snapshot()
-        searchBookResult.append(contentsOf: newItems)
         let items = newItems.map { SearchBookSectionItem.listData($0) }
         snapshot.appendItems(items, toSection: .list)
         dataSource.apply(snapshot, animatingDifferences: true)
@@ -237,7 +235,6 @@ extension SearchViewController {
     private func clearAllItems() {
         var snapshot = dataSource.snapshot()
         snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .list))
-        searchBookResult = []
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
@@ -256,7 +253,7 @@ extension SearchViewController {
 
     @objc private func printValues() {
         print("------------------------------------")
-        print("Query: \(searchBar.text ?? "")\nPage: \(page)\nIsEnd: \(isEndPage)\n# of List: \(searchBookResult.count)")
+        print("Query: \(searchBar.text ?? "")\nPage: \(page)\nIsEnd: \(isEndPage)")
         print("------------------------------------")
     }
     
