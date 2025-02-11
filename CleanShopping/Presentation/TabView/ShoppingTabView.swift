@@ -57,9 +57,9 @@ extension HomeTabBarController {
             case .search:
                 return UINavigationController(rootViewController: SearchViewController())
             case .likes:
-                return UINavigationController(rootViewController: UIViewController())
+                return UINavigationController(rootViewController: LikeViewController())
             case .settings:
-                return UINavigationController(rootViewController: UIViewController())
+                return UINavigationController(rootViewController: SettingsViewController())
             }
         }
         
