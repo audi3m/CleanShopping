@@ -77,7 +77,30 @@ final class SearchViewController: BaseViewController {
 // Rx
 extension SearchViewController {
     private func rxBind() {
+        searchBar.rx.searchButtonClicked
+            .bind(to: viewModel.input.searchButtonClicked)
+            .disposed(by: disposeBag)
         
+        searchBar.rx.text.orEmpty
+            .bind(to: viewModel.input.searchQuery)
+            .disposed(by: disposeBag)
+        
+        collectionView.rx
+            .didScroll
+            .withLatestFrom(collectionView.rx.contentOffset)
+            .filter { [weak self] offset in
+                guard let self else { return false }
+                let position = offset.y + self.collectionView.frame.size.height
+                return position >= self.collectionView.contentSize.height
+            }
+            .map { _ in }
+            .bind(to: viewModel.input.loadNextPage)
+            .disposed(by: disposeBag)
+        
+        var searchAPI = PublishRelay<BookAPI>()
+        var searchPage = PublishRelay<Int>()
+        var searchSortOption = PublishRelay<SortOption>()
+        var tappedBook = PublishRelay<Book>()
     }
 }
 
