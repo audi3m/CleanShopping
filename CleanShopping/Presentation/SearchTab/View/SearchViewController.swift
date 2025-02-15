@@ -42,7 +42,6 @@ final class SearchViewController: BaseViewController {
     var sort = SortOption.accuracy
     
     var isEndPage = false
-    var searchBookResult = [Book]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,7 +77,30 @@ final class SearchViewController: BaseViewController {
 // Rx
 extension SearchViewController {
     private func rxBind() {
+        searchBar.rx.searchButtonClicked
+            .bind(to: viewModel.input.searchButtonClicked)
+            .disposed(by: disposeBag)
         
+        searchBar.rx.text.orEmpty
+            .bind(to: viewModel.input.searchQuery)
+            .disposed(by: disposeBag)
+        
+        collectionView.rx
+            .didScroll
+            .withLatestFrom(collectionView.rx.contentOffset)
+            .filter { [weak self] offset in
+                guard let self else { return false }
+                let position = offset.y + self.collectionView.frame.size.height
+                return position >= self.collectionView.contentSize.height
+            }
+            .map { _ in }
+            .bind(to: viewModel.input.loadNextPage)
+            .disposed(by: disposeBag)
+        
+        var searchAPI = PublishRelay<BookAPI>()
+        var searchPage = PublishRelay<Int>()
+        var searchSortOption = PublishRelay<SortOption>()
+        var tappedBook = PublishRelay<Book>()
     }
 }
 
@@ -87,10 +109,11 @@ extension SearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         resetProperties()
+        query = searchBar.text ?? ""
         
         Task {
             do {
-                let bookResponse = try await getSearchResults(api: api, query: searchBar.text!, page: page, sort: sort)
+                let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
                 appendItems(newItems: bookResponse.books)
             } catch {
                 print("Error fetching next page: \(error)")
@@ -117,7 +140,7 @@ extension SearchViewController: UICollectionViewDataSourcePrefetching {
                 page += 1
                 Task {
                     do {
-                        let bookResponse = try await getSearchResults(api: api, query: searchBar.text!, page: page, sort: sort)
+                        let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
                         handleValidResponse(response: bookResponse)
                     } catch {
                         page -= 1
@@ -227,7 +250,6 @@ extension SearchViewController {
     
     private func appendItems(newItems: [Book]) {
         var snapshot = dataSource.snapshot()
-        searchBookResult.append(contentsOf: newItems)
         let items = newItems.map { SearchBookSectionItem.listData($0) }
         snapshot.appendItems(items, toSection: .list)
         dataSource.apply(snapshot, animatingDifferences: true)
@@ -236,7 +258,6 @@ extension SearchViewController {
     private func clearAllItems() {
         var snapshot = dataSource.snapshot()
         snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .list))
-        searchBookResult = []
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
@@ -255,7 +276,7 @@ extension SearchViewController {
 
     @objc private func printValues() {
         print("------------------------------------")
-        print("Query: \(searchBar.text ?? "")\nPage: \(page)\nIsEnd: \(isEndPage)\n# of List: \(searchBookResult.count)")
+        print("Query: \(searchBar.text ?? "")\nPage: \(page)\nIsEnd: \(isEndPage)")
         print("------------------------------------")
     }
     

@@ -21,7 +21,6 @@ final class HomeTabBarController: UITabBarController {
 extension HomeTabBarController {
     private func configureTabBar() {
         tabBar.backgroundColor = .secondarySystemBackground
-        tabBar.tintColor = .black
     }
     
     private func setTabItems() {
@@ -58,9 +57,9 @@ extension HomeTabBarController {
             case .search:
                 return UINavigationController(rootViewController: SearchViewController())
             case .likes:
-                return UINavigationController(rootViewController: UIViewController())
+                return UINavigationController(rootViewController: LikeViewController())
             case .settings:
-                return UINavigationController(rootViewController: UIViewController())
+                return UINavigationController(rootViewController: SettingsViewController())
             }
         }
         
@@ -76,5 +75,3 @@ extension HomeTabBarController {
         }
     }
 }
-
-

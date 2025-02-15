@@ -23,7 +23,7 @@ final class SettingsViewController: BaseViewController {
     }
     
     override func setUI() {
-        
+        navigationItem.title = "설정"
     }
     
 }

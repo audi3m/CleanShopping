@@ -11,7 +11,9 @@ import RxCocoa
 
 final class SearchBookViewModel {
     private let disposeBag: DisposeBag
-    let networkManager: BookNetworkManager
+    
+    private let networkManager: BookNetworkManager
+    private let searchPage = BehaviorRelay<Int>(value: 1)
     
     var input = Input()
     var output = Output()
@@ -27,7 +29,8 @@ final class SearchBookViewModel {
 extension SearchBookViewModel {
     struct Input {
         var viewDidLoad = PublishRelay<Void>()
-        var searchApi = PublishRelay<BookAPI>()
+        var searchButtonClicked = PublishRelay<Void>()
+        var searchAPI = PublishRelay<BookAPI>()
         var searchQuery = PublishRelay<String>()
         var searchPage = PublishRelay<Int>()
         var searchSortOption = PublishRelay<SortOption>()
@@ -36,7 +39,6 @@ extension SearchBookViewModel {
     }
     
     struct Output {
-        var searchedBooks = BehaviorRelay<[Book]>(value: [])
         var movieCellTapData = PublishRelay<Book>()
     }
 }
