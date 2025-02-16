@@ -8,35 +8,35 @@
 import Foundation
 
 enum BookAPI: String, CaseIterable {
-    case naver = "네이버"
-    case kakao = "카카오"
+  case naver = "네이버"
+  case kakao = "카카오"
 }
 
 enum SortOption: Int {
-    case accuracy
-    case date
+  case accuracy
+  case date
 }
 
 struct BookRequest {
-    let api: BookAPI
-    let query: String
-    let page: Int
-    let sort: SortOption
+  let api: BookAPI
+  let query: String
+  let page: Int
+  let sort: SortOption
 }
 
 extension BookRequest {
-    func toDTO() -> BookRequestProtocol {
-        switch api {
-        case .naver:
-            return NaverBookRequestParameters(query: query,
-                                              display: 20,
-                                              start: 1 + (page - 1) * 20,
-                                              sort: NaverBookSortOptions(rawValue: sort.rawValue) ?? .sim)
-        case .kakao:
-            return KakaoBookRequestParameters(query: query,
-                                              sort: KakaoBookSortOptions(rawValue: sort.rawValue) ?? .accuracy,
-                                              page: page,
-                                              size: 20)
-        }
+  func toDTO() -> BookRequestProtocol {
+    switch api {
+    case .naver:
+      return NaverBookRequestParameters(query: query,
+                                        display: 20,
+                                        start: 1 + (page - 1) * 20,
+                                        sort: NaverBookSortOptions(rawValue: sort.rawValue) ?? .sim)
+    case .kakao:
+      return KakaoBookRequestParameters(query: query,
+                                        sort: KakaoBookSortOptions(rawValue: sort.rawValue) ?? .accuracy,
+                                        page: page,
+                                        size: 20)
     }
+  }
 }

@@ -9,21 +9,21 @@ import UIKit
 import SnapKit
 
 final class LikeViewController: BaseViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func setHierarchy() {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
+  }
+  
+  override func setLayout() {
     
-    override func setHierarchy() {
-        
-    }
-    
-    override func setLayout() {
-        
-    }
-    
-    override func setUI() {
-        
-    }
-    
+  }
+  
+  override func setUI() {
+    navigationItem.title = "좋아요"
+  }
+  
 }

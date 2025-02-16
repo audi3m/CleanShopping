@@ -8,5 +8,5 @@
 import Foundation
 
 enum NaverBookResponseError: Error {
-    case responseError
+  case responseError
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 struct BookResponse {
-    let totalCount: Int
-    let books: [Book]
-    let isEnd: Bool
+  let totalCount: Int
+  let books: [Book]
+  let isEnd: Bool
 }

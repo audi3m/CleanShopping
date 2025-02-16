@@ -8,11 +8,11 @@
 import Foundation
 
 enum SearchBookSection: Int, CaseIterable {
-    case filter
-    case list
+  case filter
+  case list
 }
 
 enum SearchBookSectionItem: Hashable {
-    case filterOption(BookAPI)
-    case listData(Book)
+  case filterOption(BookAPI)
+  case listData(Book)
 }

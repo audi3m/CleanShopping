@@ -8,6 +8,6 @@
 import Foundation
 
 enum BusinessModel {
-    case book
+  case book
 }
 
