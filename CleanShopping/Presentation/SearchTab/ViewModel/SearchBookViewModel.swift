@@ -18,7 +18,6 @@ final class SearchBookViewModel {
   var input = Input()
   var output = Output()
   
-  
   init(networkManager: BookNetworkManager) {
     self.disposeBag = DisposeBag()
     self.networkManager = networkManager
@@ -30,10 +29,11 @@ extension SearchBookViewModel {
   struct Input {
     var viewDidLoad = PublishRelay<Void>()
     var searchButtonClicked = PublishRelay<Void>()
-    var searchAPI = PublishRelay<BookAPI>()
+    var searchAPI = BehaviorRelay<BookAPI>(value: .naver)
     var searchQuery = PublishRelay<String>()
     var searchPage = PublishRelay<Int>()
-    var searchSortOption = PublishRelay<SortOption>()
+    var searchSortOption = BehaviorRelay<SortOption>(value: .accuracy)
+    
     var loadNextPage = PublishRelay<Void>()
     var tappedBook = PublishRelay<Book>()
   }
