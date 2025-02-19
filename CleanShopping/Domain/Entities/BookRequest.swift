@@ -12,9 +12,18 @@ enum BookAPI: String, CaseIterable {
   case kakao = "카카오"
 }
 
-enum SortOption: Int {
+enum SortOption: Int, CaseIterable {
   case accuracy
   case date
+  
+  var stringValue: String {
+    switch self {
+    case .accuracy:
+      return "정확도순"
+    case .date:
+      return "날짜순"
+    }
+  }
 }
 
 struct BookRequest {
