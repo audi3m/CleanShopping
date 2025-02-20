@@ -8,39 +8,60 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 final class SearchBookViewModel {
-  private let disposeBag: DisposeBag
-  
+  private let disposeBag = DisposeBag()
   private let networkManager: BookNetworkManager
-  private let searchPage = BehaviorRelay<Int>(value: 1)
   
   var input = Input()
   var output = Output()
   
+  private let dataSource = RxCollectionViewSectionedAnimatedDataSource<SectionOfSearchBook> { (datasource, collectionView, indexPath, item) in
+          guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EnterHobbyCollectionViewCell.reuseIdentifier, for: indexPath) as? EnterHobbyCollectionViewCell else { return UICollectionViewCell() }
+          
+          cell.button.setTitle("메뉴: \\(item)", for: .normal)
+          cell.backgroundColor = .brandGreen
+          
+          return cell
+      }
+  
+  
+  var dataSource
+  var searchPage = BehaviorRelay<Int>(value: 1)
+  var isLastPage = BehaviorRelay<Bool>(value: false)
+  
   init(networkManager: BookNetworkManager) {
-    self.disposeBag = DisposeBag()
     self.networkManager = networkManager
+    transform()
   }
   
 }
 
 extension SearchBookViewModel {
+  func transform() {
+    Observable.combineLatest(input.api, input.sortOption)
+      .map { _ in }
+      .bind(to: output.optionChanged)
+      .disposed(by: disposeBag)
+  }
+}
+
+extension SearchBookViewModel {
   struct Input {
-    var viewDidLoad = PublishRelay<Void>()
     var searchButtonClicked = PublishRelay<Void>()
-    var searchAPI = BehaviorRelay<BookAPI>(value: .naver)
-    var searchQuery = PublishRelay<String>()
-    var searchPage = PublishRelay<Int>()
-    var searchSortOption = BehaviorRelay<SortOption>(value: .accuracy)
+    var api = BehaviorRelay<BookAPI>(value: .naver)
+    var query = PublishRelay<String>()
+    var sortOption = BehaviorRelay<SortOption>(value: .accuracy)
     
-    var loadNextPage = PublishRelay<Void>()
     var tappedBook = PublishRelay<Book>()
   }
   
   struct Output {
-    var movieCellTapData = PublishRelay<Book>()
+    var tappedBook = PublishRelay<Book>()
+    var optionChanged = PublishRelay<Void>()
   }
+  
 }
 
 // Search
@@ -51,6 +72,13 @@ extension SearchBookViewModel {
     let bookResponse = try await SearchBookRepository.shared.newSearchBook(bookRequest: bookRequest)
     return bookResponse
   }
+  
+  func resetProperties() {
+    input.query = PublishRelay<String>()
+    searchPage.accept(1)
+  }
+  
+  
   
 }
 
