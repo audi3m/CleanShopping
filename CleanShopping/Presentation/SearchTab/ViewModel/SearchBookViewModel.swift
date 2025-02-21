@@ -17,17 +17,6 @@ final class SearchBookViewModel {
   var input = Input()
   var output = Output()
   
-  private let dataSource = RxCollectionViewSectionedAnimatedDataSource<SectionOfSearchBook> { (datasource, collectionView, indexPath, item) in
-          guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EnterHobbyCollectionViewCell.reuseIdentifier, for: indexPath) as? EnterHobbyCollectionViewCell else { return UICollectionViewCell() }
-          
-          cell.button.setTitle("메뉴: \\(item)", for: .normal)
-          cell.backgroundColor = .brandGreen
-          
-          return cell
-      }
-  
-  
-  var dataSource
   var searchPage = BehaviorRelay<Int>(value: 1)
   var isLastPage = BehaviorRelay<Bool>(value: false)
   
@@ -58,6 +47,7 @@ extension SearchBookViewModel {
   }
   
   struct Output {
+    var searchBookResults = BehaviorRelay<[Book]>(value: [])
     var tappedBook = PublishRelay<Book>()
     var optionChanged = PublishRelay<Void>()
   }
