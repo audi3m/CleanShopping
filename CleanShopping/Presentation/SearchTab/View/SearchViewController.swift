@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 final class SearchViewController: BaseViewController {
   
@@ -21,8 +22,8 @@ final class SearchViewController: BaseViewController {
   }()
   private lazy var collectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
-    collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: "BookCollectionViewCell")
     collectionView.register(BookApiSelectionCollectionViewCell.self, forCellWithReuseIdentifier: "BookApiSelectionCollectionViewCell")
+    collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: "BookCollectionViewCell")
     collectionView.delegate = self
     collectionView.prefetchDataSource = self
     collectionView.keyboardDismissMode = .onDrag
@@ -32,9 +33,21 @@ final class SearchViewController: BaseViewController {
   
   private var dataSource: UICollectionViewDiffableDataSource<SearchBookSection, SearchBookSectionItem>!
   
+  typealias DataSource = RxCollectionViewSectionedReloadDataSource
+  private let dataSource2 = DataSource<SearchBookSectionModel> { dataSource, collectionView, indexPath, item in
+    switch dataSource[indexPath] {
+    case .body(let book):
+      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as? BookCollectionViewCell else {
+        return UICollectionViewCell()
+      }
+      cell.configureData(book: book)
+      return cell
+    }
+  }
+  
   private let disposeBag = DisposeBag()
-  private let viewModel = SearchBookViewModel(networkManager: BookNetworkManager.shared)
-  private let searchBookRepository = SearchBookRepository.shared
+  private let viewModel: SearchBookViewModel
+  private let searchBookRepository: SearchBookRepository
   
   var api = BookAPI.naver
   var query = ""
@@ -42,6 +55,16 @@ final class SearchViewController: BaseViewController {
   var sort = SortOption.accuracy
   
   var isEndPage = false
+  
+  init(searchBookRepository: SearchBookRepository, viewModel: SearchBookViewModel) {
+    self.searchBookRepository = searchBookRepository
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -82,7 +105,7 @@ extension SearchViewController {
       .disposed(by: disposeBag)
     
     searchBar.rx.text.orEmpty
-      .bind(to: viewModel.input.searchQuery)
+      .bind(to: viewModel.input.query)
       .disposed(by: disposeBag)
     
     collectionView.rx
@@ -94,13 +117,18 @@ extension SearchViewController {
         return position >= self.collectionView.contentSize.height
       }
       .map { _ in }
-      .bind(to: viewModel.input.loadNextPage)
+      .bind(to: viewModel.input.searchButtonClicked)
       .disposed(by: disposeBag)
     
-    var searchAPI = PublishRelay<BookAPI>()
-    var searchPage = PublishRelay<Int>()
-    var searchSortOption = PublishRelay<SortOption>()
-    var tappedBook = PublishRelay<Book>()
+    viewModel.output.optionChanged
+      .subscribe(onNext: { [weak self] in
+        guard let self else { return }
+        self.setupNavigationBarMenu()
+      })
+      .disposed(by: disposeBag)
+      
+      
+    
   }
 }
 
@@ -266,29 +294,26 @@ extension SearchViewController {
 // Test
 extension SearchViewController {
   
-  private func setNavItems() {
-    let item = UIBarButtonItem(image: UIImage(systemName: "star"),
-                               style: .plain, target: self,
-                               action: #selector(printValues))
-    
-    navigationItem.leftBarButtonItems = [item]
-  }
-  
-  @objc private func printValues() {
-    print("------------------------------------")
-    print("Query: \(searchBar.text ?? "")\nPage: \(page)\nIsEnd: \(isEndPage)")
-    print("------------------------------------")
-  }
-  
   private func setupNavigationBarMenu() {
     let apiItems = BookAPI.allCases.map { apiType in
-      UIAction(title: apiType.rawValue, state: self.api == apiType ? .on : .off) { _ in
-        self.api = apiType
-        self.setupNavigationBarMenu()
+      UIAction(title: apiType.rawValue, state: viewModel.input.api.value == apiType ? .on : .off) { [weak self] _ in
+        guard let self else { return }
+        self.viewModel.input.api.accept(apiType)
       }
     }
     
-    let menu = UIMenu(title: "", children: apiItems)
-    navigationItem.rightBarButtonItem = UIBarButtonItem(title: api.rawValue, menu: menu)
+    let sortItems = SortOption.allCases.map { sortType in
+      UIAction(title: sortType.stringValue, state: viewModel.input.sortOption.value == sortType ? .on : .off) { [weak self] _ in
+        guard let self else { return }
+        self.viewModel.input.sortOption.accept(sortType)
+      }
+    }
+    
+    let apiMenu = UIMenu(title: "사이트", options: .displayInline, children: apiItems)
+    let sortMenu = UIMenu(title: "순서", options: .displayInline, children: sortItems)
+    
+    let menu = UIMenu(title: "", children: [apiMenu, sortMenu])
+    navigationItem.rightBarButtonItem = UIBarButtonItem(title: "필터", menu: menu)
   }
+  
 }
