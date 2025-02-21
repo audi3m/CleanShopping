@@ -8,50 +8,68 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 final class SearchBookViewModel {
-    private let disposeBag: DisposeBag
-    
-    private let networkManager: BookNetworkManager
-    private let searchPage = BehaviorRelay<Int>(value: 1)
-    
-    var input = Input()
-    var output = Output()
-    
-    
-    init(networkManager: BookNetworkManager) {
-        self.disposeBag = DisposeBag()
-        self.networkManager = networkManager
-    }
-    
+  private let disposeBag = DisposeBag()
+  private let networkManager: BookNetworkManager
+  
+  var input = Input()
+  var output = Output()
+  
+  var searchPage = BehaviorRelay<Int>(value: 1)
+  var isLastPage = BehaviorRelay<Bool>(value: false)
+  
+  init(networkManager: BookNetworkManager) {
+    self.networkManager = networkManager
+    transform()
+  }
+  
 }
 
 extension SearchBookViewModel {
-    struct Input {
-        var viewDidLoad = PublishRelay<Void>()
-        var searchButtonClicked = PublishRelay<Void>()
-        var searchAPI = PublishRelay<BookAPI>()
-        var searchQuery = PublishRelay<String>()
-        var searchPage = PublishRelay<Int>()
-        var searchSortOption = PublishRelay<SortOption>()
-        var loadNextPage = PublishRelay<Void>()
-        var tappedBook = PublishRelay<Book>()
-    }
+  func transform() {
+    Observable.combineLatest(input.api, input.sortOption)
+      .map { _ in }
+      .bind(to: output.optionChanged)
+      .disposed(by: disposeBag)
+  }
+}
+
+extension SearchBookViewModel {
+  struct Input {
+    var searchButtonClicked = PublishRelay<Void>()
+    var api = BehaviorRelay<BookAPI>(value: .naver)
+    var query = PublishRelay<String>()
+    var sortOption = BehaviorRelay<SortOption>(value: .accuracy)
     
-    struct Output {
-        var movieCellTapData = PublishRelay<Book>()
-    }
+    var tappedBook = PublishRelay<Book>()
+  }
+  
+  struct Output {
+    var searchBookResults = BehaviorRelay<[Book]>(value: [])
+    var tappedBook = PublishRelay<Book>()
+    var optionChanged = PublishRelay<Void>()
+  }
+  
 }
 
 // Search
 extension SearchBookViewModel {
-    
-    func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
-        let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
-        let bookResponse = try await SearchBookRepository.shared.newSearchBook(bookRequest: bookRequest)
-        return bookResponse
-    }
-    
+  
+  func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
+    let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
+    let bookResponse = try await SearchBookRepository.shared.newSearchBook(bookRequest: bookRequest)
+    return bookResponse
+  }
+  
+  func resetProperties() {
+    input.query = PublishRelay<String>()
+    searchPage.accept(1)
+  }
+  
+  
+  
 }
 
 
@@ -60,7 +78,7 @@ extension SearchBookViewModel {
 
 // Save
 extension SearchBookViewModel {
-    func saveBook() {
-        
-    }
+  func saveBook() {
+    
+  }
 }

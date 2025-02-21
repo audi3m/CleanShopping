@@ -9,21 +9,21 @@ import UIKit
 import SnapKit
 
 final class SettingsViewController: BaseViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func setHierarchy() {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
+  }
+  
+  override func setLayout() {
     
-    override func setHierarchy() {
-        
-    }
-    
-    override func setLayout() {
-        
-    }
-    
-    override func setUI() {
-        navigationItem.title = "설정"
-    }
-    
+  }
+  
+  override func setUI() {
+    navigationItem.title = "설정"
+  }
+  
 }

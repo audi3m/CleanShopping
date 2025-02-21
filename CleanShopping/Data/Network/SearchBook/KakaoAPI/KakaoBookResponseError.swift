@@ -8,5 +8,5 @@
 import Foundation
 
 enum KakaoBookResponseError: Error {
-    case responseError
+  case responseError
 }

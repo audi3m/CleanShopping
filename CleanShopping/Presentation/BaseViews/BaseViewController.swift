@@ -8,18 +8,18 @@
 import UIKit
 
 class BaseViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .white
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        
-        setHierarchy()
-        setLayout()
-        setUI()
-    }
-    
-    func setHierarchy() { }
-    func setLayout() { }
-    func setUI() { }
-    
+    setHierarchy()
+    setLayout()
+    setUI()
+  }
+  
+  func setHierarchy() { }
+  func setLayout() { }
+  func setUI() { }
+  
 }
