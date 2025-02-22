@@ -6,6 +6,11 @@
 //
 
 import Foundation
+import RxSwift
+
+enum BookRequestError: Error {
+  case badRequest
+}
 
 final class SearchBookRepository {
   static let shared = SearchBookRepository()
@@ -18,6 +23,41 @@ final class SearchBookRepository {
 }
 
 extension SearchBookRepository {
+  
+  func searchBookSingle(bookRequest: BookRequest) -> Single<Result<BookResponse, BookRequestError>> {
+    return Single.create { [weak self] single -> Disposable in
+      guard let self else {
+        single(.success(.failure(.badRequest)))
+        return Disposables.create()
+      }
+      
+      switch bookRequest.api {
+      case .naver:
+        let params = bookRequest.toDTO() as! NaverBookRequestParameters
+        self.networkManager.request(target: .naver(param: params), of: NaverBookResponseDTO.self) { result in
+          switch result {
+          case .success(let success):
+            single(.success(.success(success.toDomain())))
+          case .failure(let failure):
+            single(.failure(failure))
+          }
+        }
+        
+      case .kakao:
+        let params = bookRequest.toDTO() as! KakaoBookRequestParameters
+        self.networkManager.request(target: .kakao(param: params), of: KakaoBookResponseDTO.self) { result in
+          switch result {
+          case .success(let success):
+            single(.success(.success(success.toDomain())))
+          case .failure(let failure):
+            single(.failure(failure))
+          }
+        }
+      }
+      
+      return Disposables.create()
+    }
+  }
   
   func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, Error>) -> Void) {
     switch bookRequest.api {
