@@ -47,7 +47,7 @@ extension SearchBookViewModel {
   }
   
   struct Output {
-    var searchBookResults = BehaviorRelay<[Book]>(value: [])
+    var searchBookSectionModel = BehaviorRelay<[SearchBookSectionModel2]>(value: [])
     var tappedBook = PublishRelay<Book>()
     var optionChanged = PublishRelay<Void>()
   }
@@ -66,13 +66,35 @@ extension SearchBookViewModel {
         guard let self else { return }
         switch result {
         case .success(let response):
-          let books = response.books
-          if page == 1 {
-            self.output.searchBookResults.accept(books)
+          let books = response.books.map { SearchBookSectionItem2.bodyItem(book: $0) }
+          let headerSection = SearchBookSectionModel2.headerSection(items: [.headerItem(api: api)])
+          
+          var updatedSections = self.output.searchBookSectionModel.value
+          
+          if let bodyIndex = updatedSections.firstIndex(where: {
+            if case .bodySection = $0 { return true }
+            return false
+          }) {
+            if page == 1 {
+              updatedSections[bodyIndex] = .bodySection(items: books)
+            } else {
+              if case .bodySection(let existingItems) = updatedSections[bodyIndex] {
+                updatedSections[bodyIndex] = .bodySection(items: existingItems + books)
+              }
+            }
           } else {
-            let updatedBooks = self.output.searchBookResults.value + books
-            self.output.searchBookResults.accept(updatedBooks)
+            updatedSections.append(.bodySection(items: books))
           }
+          
+          if updatedSections.first(where: {
+            if case .headerSection = $0 { return true }
+            return false
+          }) == nil {
+            updatedSections.insert(headerSection, at: 0)
+          }
+          
+          self.output.searchBookSectionModel.accept(updatedSections)
+          
         case .failure(let error):
           print(error.localizedDescription)
         }
