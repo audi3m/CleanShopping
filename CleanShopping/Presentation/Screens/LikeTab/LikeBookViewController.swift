@@ -1,5 +1,5 @@
 //
-//  LikeViewController.swift
+//  LikeBookViewController.swift
 //  CleanShopping
 //
 //  Created by J Oh on 1/18/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class LikeViewController: BaseViewController {
+final class LikeBookViewController: BaseViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()

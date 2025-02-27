@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-final class DetailViewController: UIViewController {
+final class DetailViewController: BaseViewController {
   
   
   override func viewDidLoad() {

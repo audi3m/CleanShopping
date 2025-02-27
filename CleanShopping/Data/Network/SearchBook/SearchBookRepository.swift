@@ -59,7 +59,7 @@ extension SearchBookRepository {
     }
   }
   
-  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, Error>) -> Void) {
+  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, BookRequestError>) -> Void) {
     switch bookRequest.api {
     case .naver:
       let params = bookRequest.toDTO() as! NaverBookRequestParameters
@@ -67,8 +67,8 @@ extension SearchBookRepository {
         switch result {
         case .success(let value):
           handler(.success(value.toDomain()))
-        case .failure(let error):
-          handler(.failure(error))
+        case .failure:
+          handler(.failure(.badRequest))
         }
       }
     case .kakao:
@@ -77,13 +77,17 @@ extension SearchBookRepository {
         switch result {
         case .success(let value):
           handler(.success(value.toDomain()))
-        case .failure(let error):
-          handler(.failure(error))
+        case .failure:
+          handler(.failure(.badRequest))
         }
       }
     }
   }
   
+}
+ 
+// async/await
+extension SearchBookRepository {
   func newSearchBook(bookRequest: BookRequest) async throws -> BookResponse {
     switch bookRequest.api {
     case .naver:

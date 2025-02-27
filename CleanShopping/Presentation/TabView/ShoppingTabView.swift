@@ -55,10 +55,10 @@ extension HomeTabBarController {
     var viewController: UIViewController {
       switch self {
       case .search:
-        return UINavigationController(rootViewController: SearchViewController(searchBookRepository: SearchBookRepository.shared,
-                                                                               viewModel: SearchBookViewModel(networkManager: BookNetworkManager.shared)))
+        return UINavigationController(rootViewController: SearchBookViewController(searchBookRepository: SearchBookRepository.shared,
+                                                                                   viewModel: SearchBookViewModel(searchBookRepository: SearchBookRepository.shared)))
       case .likes:
-        return UINavigationController(rootViewController: LikeViewController())
+        return UINavigationController(rootViewController: LikeBookViewController())
       case .settings:
         return UINavigationController(rootViewController: SettingsViewController())
       }
