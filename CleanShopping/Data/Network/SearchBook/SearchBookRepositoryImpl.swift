@@ -12,8 +12,8 @@ enum BookRequestError: Error {
   case badRequest
 }
 
-final class SearchBookRepository {
-  static let shared = SearchBookRepository()
+final class SearchBookRepositoryImpl {
+  static let shared = SearchBookRepositoryImpl()
   
   private let networkManager: BookNetworkManager
   
@@ -22,7 +22,7 @@ final class SearchBookRepository {
   }
 }
 
-extension SearchBookRepository {
+extension SearchBookRepositoryImpl {
   
   func searchBookSingle(bookRequest: BookRequest) -> Single<Result<BookResponse, BookRequestError>> {
     return Single.create { [weak self] single -> Disposable in
@@ -87,7 +87,7 @@ extension SearchBookRepository {
 }
  
 // async/await
-extension SearchBookRepository {
+extension SearchBookRepositoryImpl {
   func newSearchBook(bookRequest: BookRequest) async throws -> BookResponse {
     switch bookRequest.api {
     case .naver:
