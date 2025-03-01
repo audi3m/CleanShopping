@@ -1,5 +1,5 @@
 //
-//  SearchBookRepository.swift
+//  SearchBookRepositoryImpl.swift
 //  CleanShopping
 //
 //  Created by J Oh on 1/25/25.
@@ -22,6 +22,7 @@ final class SearchBookRepositoryImpl {
   }
 }
 
+// Single
 extension SearchBookRepositoryImpl {
   
   func searchBookSingle(bookRequest: BookRequest) -> Single<Result<BookResponse, BookRequestError>> {
@@ -58,6 +59,10 @@ extension SearchBookRepositoryImpl {
       return Disposables.create()
     }
   }
+}
+
+// @escaping
+extension SearchBookRepositoryImpl {
   
   func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, BookRequestError>) -> Void) {
     switch bookRequest.api {
