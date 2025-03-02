@@ -11,6 +11,10 @@ import Kingfisher
 
 final class DetailViewController: BaseViewController {
   
+  // 표지
+  // 제목
+  // 가격
+  // 내용
   
   override func viewDidLoad() {
     super.viewDidLoad()

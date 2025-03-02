@@ -10,6 +10,8 @@ import SnapKit
 
 final class LikeBookViewController: BaseViewController {
   
+  // 좋아요한 도서 목록
+  
   override func viewDidLoad() {
     super.viewDidLoad()
   }
