@@ -15,7 +15,7 @@ final class BookNetworkManager {
 
 extension BookNetworkManager {
   
-  func newRequest<T: Decodable>(target: SearchBookRouter, of type: T.Type) async throws -> T {
+  func asyncRequest<T: Decodable>(target: SearchBookRouter, of type: T.Type) async throws -> T {
     let request = try target.asURLRequest()
     return try await withCheckedThrowingContinuation { continuation in
       AF.request(request)

@@ -97,11 +97,11 @@ extension SearchBookRepositoryImpl {
     switch bookRequest.api {
     case .naver:
       let params = bookRequest.toDTO() as! NaverBookRequestParameters
-      let response = try await networkManager.newRequest(target: .naver(param: params), of: NaverBookResponseDTO.self)
+      let response = try await networkManager.asyncRequest(target: .naver(param: params), of: NaverBookResponseDTO.self)
       return response.toDomain()
     case .kakao:
       let params = bookRequest.toDTO() as! KakaoBookRequestParameters
-      let response = try await networkManager.newRequest(target: .kakao(param: params), of: KakaoBookResponseDTO.self)
+      let response = try await networkManager.asyncRequest(target: .kakao(param: params), of: KakaoBookResponseDTO.self)
       return response.toDomain()
     }
   }

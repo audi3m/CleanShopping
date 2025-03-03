@@ -7,6 +7,35 @@
 
 import Foundation
 
+final class BookRepositoryImpl: BookRepository {
+  
+  private let remoteDataSource: BookRemoteDataSource
+  private let localDataSource: BookLocalDataSource
+  
+  init(remoteDataSource: BookRemoteDataSource, localDataSource: BookLocalDataSource) {
+    self.remoteDataSource = remoteDataSource
+    self.localDataSource = localDataSource
+  }
+  
+}
+
+// search
+extension BookRepositoryImpl {
+  func searchBook() {
+    
+  }
+}
+
+// save
+extension BookRepositoryImpl {
+  func saveBook() {
+    
+  }
+}
+
+
+
+
 final class SearchBookUseCaseImpl: SearchBookUseCase {
   private let repository: SearchBookRepository
   
