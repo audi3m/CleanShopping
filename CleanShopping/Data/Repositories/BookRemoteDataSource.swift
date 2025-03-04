@@ -7,13 +7,13 @@
 
 import Foundation
 
-protocol BookRemoteDataSource {
+protocol BookRemoteDataSourceProtocol {
   func saveBook()
   func deleteBook()
   func getCachedBooks()
 }
 
-final class BookRemoteDataSourceImpl: BookRemoteDataSource {
+final class BookRemoteDataSource: BookRemoteDataSourceProtocol {
   func saveBook() { }
   func deleteBook() { }
   func getCachedBooks() { }

@@ -7,13 +7,13 @@
 
 import Foundation
 
-protocol BookLocalDataSource {
+protocol BookLocalDataSourceProtocol {
   func saveBook()
   func deleteBook()
   func getCachedBooks()
 }
 
-final class BookLocalDataSourceImpl: BookLocalDataSource {
+final class BookLocalDataSourceImpl: BookLocalDataSourceProtocol {
   func saveBook() { }
   func deleteBook() { }
   func getCachedBooks() { }
