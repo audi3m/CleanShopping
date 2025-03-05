@@ -53,37 +53,3 @@ extension SearchBookSectionModel2: SectionModelType {
     }
   }
 }
-
-
-//// RxDataSource
-//enum SearchBookSectionItem2 {
-//  case headerItem(api: BookAPI)
-//  case bodyItem(book: Book)
-//}
-//
-//enum SearchBookSectionModel2 {
-//  case headerSection(items: [SearchBookSectionItem2])
-//  case bodySection(items: [SearchBookSectionItem2])
-//}
-//
-//extension SearchBookSectionModel2: SectionModelType {
-//  typealias Item = SearchBookSectionItem2
-//  
-//  var items: [SearchBookSectionItem2] {
-//    switch self {
-//    case .headerSection(items: let items):
-//      return items
-//    case .bodySection(items: let items):
-//      return items
-//    }
-//  }
-//  
-//  init(original: SearchBookSectionModel2, items: [SearchBookSectionItem2]) {
-//    switch original {
-//    case .headerSection(items: let items):
-//      self = .bodySection(items: items)
-//    case .bodySection(items: let items):
-//      self = .bodySection(items: items)
-//    }
-//  }
-//}
