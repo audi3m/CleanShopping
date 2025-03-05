@@ -6,3 +6,19 @@
 //
 
 import Foundation
+
+final class SearchBookUseCaseImpl: SearchBookUseCase {
+  
+  private let repository: SearchBookRepository
+  
+  init(repository: SearchBookRepository) {
+    self.repository = repository
+  }
+  
+  func executeSearch() {
+    repository.searchBook()
+//    repository.searchBookSingle()
+//    repository.searchBookAsync()
+  }
+  
+}
