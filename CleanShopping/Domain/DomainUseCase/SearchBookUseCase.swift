@@ -8,5 +8,5 @@
 import Foundation
 
 protocol SearchBookUseCase {
-  func execute(api: BookAPI, query: String, page: Int, sort: SortOption) -> BookResponse
+  func executeSearch()
 }
