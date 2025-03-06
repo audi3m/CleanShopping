@@ -44,3 +44,7 @@ struct NaverBookDTO: Decodable, BookDTOProtocol {
                 description: description)
   }
 }
+
+enum NaverBookResponseError: Error {
+  case responseError
+}
