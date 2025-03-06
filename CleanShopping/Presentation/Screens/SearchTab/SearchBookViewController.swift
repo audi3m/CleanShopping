@@ -52,7 +52,6 @@ final class SearchBookViewController: BaseViewController {
   
   private let disposeBag = DisposeBag()
   private let viewModel: SearchBookViewModel
-  private let searchBookRepository: SearchBookRepository
   
   var api = BookAPI.naver
   var query = ""
@@ -61,8 +60,7 @@ final class SearchBookViewController: BaseViewController {
   
   var isEndPage = false
   
-  init(searchBookRepository: SearchBookRepository, viewModel: SearchBookViewModel) {
-    self.searchBookRepository = searchBookRepository
+  init(viewModel: SearchBookViewModel) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -160,7 +158,6 @@ extension SearchBookViewController: UISearchBarDelegate {
 // CollectionView Delegate
 extension SearchBookViewController: UICollectionViewDelegate {
   
-  
 }
 
 // CollectionView Prefetch
@@ -198,7 +195,7 @@ extension SearchBookViewController {
   private func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
     guard !query.isEmpty else { return BookResponse(totalCount: 0, books: [], isEnd: true) }
     let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
-    let bookResponse = try await searchBookRepository.newSearchBook(bookRequest: bookRequest)
+    let bookResponse = try await viewModel.getSearchResultsAsync(bookRequest: bookRequest)
     return bookResponse
   }
   

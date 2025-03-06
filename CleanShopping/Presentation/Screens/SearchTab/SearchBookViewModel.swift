@@ -13,11 +13,8 @@ import RxDataSources
 final class SearchBookViewModel {
   private let disposeBag = DisposeBag()
   
-  private let searchBookRepository: SearchBookRepository
-  
   private let searchBookUseCase: SearchBookUseCase
   private let saveBookUseCase: SaveBookUseCase
-  
   
   var input = Input()
   var output = Output()
@@ -25,10 +22,8 @@ final class SearchBookViewModel {
   var searchPage = BehaviorRelay<Int>(value: 1)
   var isLastPage = BehaviorRelay<Bool>(value: false)
   
-  init(searchBookRepository: SearchBookRepository,
-       searchBookUseCase: SearchBookUseCase,
+  init(searchBookUseCase: SearchBookUseCase,
        saveBookUseCase: SaveBookUseCase) {
-    self.searchBookRepository = searchBookRepository
     
     self.searchBookUseCase = searchBookUseCase
     self.saveBookUseCase = saveBookUseCase
@@ -69,23 +64,24 @@ extension SearchBookViewModel {
 // UseCase Search
 extension SearchBookViewModel {
   func getSearchResults() {
-    let result = searchBookUseCase.execute(api: .naver, query: "", page: 1, sort: .accuracy)
+    
   }
 }
 
 // Search
 extension SearchBookViewModel {
   
+  // RxDataSource
   func fetchSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) {
     let bookrequest = BookRequest(api: api, query: query, page: page, sort: sort)
     
-    searchBookRepository.searchBookSingle(bookRequest: bookrequest)
+    searchBookUseCase.searchBookSingle(bookRequest: bookrequest)
       .observe(on: MainScheduler.instance)
       .subscribe(onSuccess: { [weak self] result in
         guard let self else { return }
         switch result {
-        case .success(let response):
-          let books = response.books.map { SearchBookSectionItem2.bodyItem(book: $0) }
+        case .success(let value):
+          let books = value.books.map { SearchBookSectionItem2.bodyItem(book: $0) }
           let headerSection = SearchBookSectionModel2.headerSection(items: [.headerItem(api: api)])
           
           var updatedSections = self.output.dataSource.value
@@ -123,9 +119,10 @@ extension SearchBookViewModel {
       .disposed(by: disposeBag)
   }
   
-  func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
+  // async await
+  func getSearchResultsAsync(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
     let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
-    let bookResponse = try await searchBookRepository.newSearchBook(bookRequest: bookRequest)
+    let bookResponse = try await searchBookUseCase.execute(<#SearchBookUseCase#>).searchBookAsync(bookrequest: bookRequest)
     return bookResponse
   }
   

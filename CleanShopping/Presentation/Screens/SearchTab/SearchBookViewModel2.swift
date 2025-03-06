@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 final class SearchBookViewModel2 {
   
@@ -19,29 +20,40 @@ final class SearchBookViewModel2 {
     self.saveBookUseCase = saveBookUseCase
   }
   
+  
+  
+}
+
+// Transform
+extension SearchBookViewModel2: InOutViewModel {
+  
   struct Input {
-    
+    let searchAPI = BehaviorSubject<BookAPI>(value: .naver)
+    let searchQuery = BehaviorSubject<String>(value: "")
+    let searchPage = BehaviorSubject<Int>(value: 1)
+    let searchSort = BehaviorSubject<SortOption>(value: .accuracy)
+    let searchTrigger = PublishRelay<Void>()
   }
   
   struct Output {
-    
+    let results: Driver<[Book]>
   }
   
-  
-}
-
-extension SearchBookViewModel2 {
   func transform(input: Input) -> Output {
-    return Output()
+    
+    return Output(results: <#Driver<[Book]>#>)
   }
-}
-
-// search
-extension SearchBookViewModel2 {
   
 }
 
-// save
+// Search
+extension SearchBookViewModel2 {
+  // 검색결과 불러오기
+  // 초기화
+  //
+}
+
+// Save
 extension SearchBookViewModel2 {
   
 }

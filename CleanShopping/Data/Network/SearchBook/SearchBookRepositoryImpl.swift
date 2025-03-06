@@ -37,10 +37,10 @@ extension SearchBookRepositoryImpl {
         let params = bookRequest.toDTO() as! NaverBookRequestParameters
         self.networkManager.request(target: .naver(param: params), of: NaverBookResponseDTO.self) { result in
           switch result {
-          case .success(let success):
-            single(.success(.success(success.toDomain())))
-          case .failure(let failure):
-            single(.failure(failure))
+          case .success(let value):
+            single(.success(.success(value.toDomain())))
+          case .failure(let error):
+            single(.failure(error))
           }
         }
         
@@ -48,10 +48,10 @@ extension SearchBookRepositoryImpl {
         let params = bookRequest.toDTO() as! KakaoBookRequestParameters
         self.networkManager.request(target: .kakao(param: params), of: KakaoBookResponseDTO.self) { result in
           switch result {
-          case .success(let success):
-            single(.success(.success(success.toDomain())))
-          case .failure(let failure):
-            single(.failure(failure))
+          case .success(let value):
+            single(.success(.success(value.toDomain())))
+          case .failure(let error):
+            single(.failure(error))
           }
         }
       }
@@ -97,11 +97,11 @@ extension SearchBookRepositoryImpl {
     switch bookRequest.api {
     case .naver:
       let params = bookRequest.toDTO() as! NaverBookRequestParameters
-      let response = try await networkManager.asyncRequest(target: .naver(param: params), of: NaverBookResponseDTO.self)
+      let response = try await networkManager.requestAsync(target: .naver(param: params), of: NaverBookResponseDTO.self)
       return response.toDomain()
     case .kakao:
       let params = bookRequest.toDTO() as! KakaoBookRequestParameters
-      let response = try await networkManager.asyncRequest(target: .kakao(param: params), of: KakaoBookResponseDTO.self)
+      let response = try await networkManager.requestAsync(target: .kakao(param: params), of: KakaoBookResponseDTO.self)
       return response.toDomain()
     }
   }

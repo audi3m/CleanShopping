@@ -10,3 +10,19 @@ import Foundation
 final class LikeBookViewModel {
   
 }
+
+extension LikeBookViewModel: InOutViewModel {
+  
+  struct Input {
+    
+  }
+  
+  struct Output {
+    
+  }
+  
+  func transform(input: Input) -> Output {
+    return Output()
+  }
+  
+}

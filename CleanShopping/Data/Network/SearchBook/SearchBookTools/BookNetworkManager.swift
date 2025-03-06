@@ -15,7 +15,7 @@ final class BookNetworkManager {
 
 extension BookNetworkManager {
   
-  func asyncRequest<T: Decodable>(target: SearchBookRouter, of type: T.Type) async throws -> T {
+  func requestAsync<T: Decodable>(target: SearchBookRouter, of type: T.Type) async throws -> T {
     let request = try target.asURLRequest()
     return try await withCheckedThrowingContinuation { continuation in
       AF.request(request)
@@ -30,9 +30,7 @@ extension BookNetworkManager {
     }
   }
   
-  func request<T: Decodable>(target: SearchBookRouter,
-                             of type: T.Type,
-                             handler: @escaping (Result<T, Error>) -> Void) {
+  func request<T: Decodable>(target: SearchBookRouter, of type: T.Type, handler: @escaping (Result<T, Error>) -> Void) {
     do {
       let request = try target.asURLRequest()
       AF.request(request)

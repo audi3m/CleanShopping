@@ -10,3 +10,19 @@ import Foundation
 final class DetailViewViewModel {
   
 }
+
+extension DetailViewViewModel: InOutViewModel {
+  
+  struct Input {
+    
+  }
+  
+  struct Output {
+    
+  }
+  
+  func transform(input: Input) -> Output {
+    return Output()
+  }
+  
+}
