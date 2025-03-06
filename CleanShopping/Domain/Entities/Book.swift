@@ -38,6 +38,18 @@ extension Book {
   }
 }
 
+extension Book {
+  static let sample = Book(title: "",
+                           link: "",
+                           image: "",
+                           author: "",
+                           discount: "",
+                           publisher: "",
+                           pubdate: "",
+                           isbn: "",
+                           description: "")
+}
+
 extension Date {
   func toFormat() -> String {
     let dateFormatter = DateFormatter()

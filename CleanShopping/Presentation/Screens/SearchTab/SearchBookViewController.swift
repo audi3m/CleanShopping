@@ -1,5 +1,5 @@
 //
-//  SearchViewController.swift
+//  SearchBookViewController.swift
 //  CleanShopping
 //
 //  Created by J Oh on 1/3/25.
@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-final class SearchViewController: BaseViewController {
+final class SearchBookViewController: BaseViewController {
   
   private lazy var searchBar: UISearchBar = {
     let searchBar = UISearchBar()
@@ -22,8 +22,8 @@ final class SearchViewController: BaseViewController {
   }()
   private lazy var collectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
-    collectionView.register(BookApiSelectionCollectionViewCell.self, forCellWithReuseIdentifier: "BookApiSelectionCollectionViewCell")
-    collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: "BookCollectionViewCell")
+    collectionView.register(BookApiSelectionCollectionViewCell.self, forCellWithReuseIdentifier: BookApiSelectionCollectionViewCell.id)
+    collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: BookCollectionViewCell.id)
     collectionView.delegate = self
     collectionView.prefetchDataSource = self
     collectionView.keyboardDismissMode = .onDrag
@@ -33,10 +33,15 @@ final class SearchViewController: BaseViewController {
   
   private var dataSource: UICollectionViewDiffableDataSource<SearchBookSection, SearchBookSectionItem>!
   
-  typealias DataSource = RxCollectionViewSectionedReloadDataSource
-  private let dataSource2 = DataSource<SearchBookSectionModel> { dataSource, collectionView, indexPath, item in
-    switch dataSource[indexPath] {
-    case .body(let book):
+  private let dataSource2 = RxCollectionViewSectionedReloadDataSource<SearchBookSectionModel2> { dataSource, collectionView, indexPath, sectionType in
+    switch sectionType {
+    case .headerItem(let api):
+      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookApiSelectionCollectionViewCell.id, for: indexPath) as? BookApiSelectionCollectionViewCell else {
+        return UICollectionViewCell()
+      }
+      cell.configureData(api: api)
+      return cell
+    case .bodyItem(let book):
       guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as? BookCollectionViewCell else {
         return UICollectionViewCell()
       }
@@ -47,7 +52,6 @@ final class SearchViewController: BaseViewController {
   
   private let disposeBag = DisposeBag()
   private let viewModel: SearchBookViewModel
-  private let searchBookRepository: SearchBookRepository
   
   var api = BookAPI.naver
   var query = ""
@@ -56,8 +60,7 @@ final class SearchViewController: BaseViewController {
   
   var isEndPage = false
   
-  init(searchBookRepository: SearchBookRepository, viewModel: SearchBookViewModel) {
-    self.searchBookRepository = searchBookRepository
+  init(viewModel: SearchBookViewModel) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -98,7 +101,7 @@ final class SearchViewController: BaseViewController {
 }
 
 // Rx
-extension SearchViewController {
+extension SearchBookViewController {
   private func rxBind() {
     searchBar.rx.searchButtonClicked
       .bind(to: viewModel.input.searchButtonClicked)
@@ -120,20 +123,21 @@ extension SearchViewController {
       .bind(to: viewModel.input.searchButtonClicked)
       .disposed(by: disposeBag)
     
-    viewModel.output.optionChanged
-      .subscribe(onNext: { [weak self] in
-        guard let self else { return }
-        self.setupNavigationBarMenu()
-      })
+    viewModel.output.dataSource
+      .bind(to: collectionView.rx.items(dataSource: dataSource2))
       .disposed(by: disposeBag)
-      
-      
+    
+    viewModel.output.optionChanged
+      .bind(with: self) { owner, _ in
+        owner.setupNavigationBarMenu()
+      }
+      .disposed(by: disposeBag)
     
   }
 }
 
 // Search Bar
-extension SearchViewController: UISearchBarDelegate {
+extension SearchBookViewController: UISearchBarDelegate {
   
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
     resetProperties()
@@ -152,13 +156,12 @@ extension SearchViewController: UISearchBarDelegate {
 }
 
 // CollectionView Delegate
-extension SearchViewController: UICollectionViewDelegate {
-  
+extension SearchBookViewController: UICollectionViewDelegate {
   
 }
 
 // CollectionView Prefetch
-extension SearchViewController: UICollectionViewDataSourcePrefetching {
+extension SearchBookViewController: UICollectionViewDataSourcePrefetching {
   func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
     guard !isEndPage else { return }
     
@@ -182,7 +185,7 @@ extension SearchViewController: UICollectionViewDataSourcePrefetching {
 }
 
 // Network Request
-extension SearchViewController {
+extension SearchBookViewController {
   
   private func handleValidResponse(response: BookResponse) {
     isEndPage = response.isEnd
@@ -192,7 +195,7 @@ extension SearchViewController {
   private func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
     guard !query.isEmpty else { return BookResponse(totalCount: 0, books: [], isEnd: true) }
     let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
-    let bookResponse = try await searchBookRepository.newSearchBook(bookRequest: bookRequest)
+    let bookResponse = try await viewModel.getSearchResultsAsync(bookRequest: bookRequest)
     return bookResponse
   }
   
@@ -207,7 +210,7 @@ extension SearchViewController {
 }
 
 // Compositional Layout & Sections
-extension SearchViewController {
+extension SearchBookViewController {
   
   private func createLayout() -> UICollectionViewCompositionalLayout {
     return UICollectionViewCompositionalLayout { [weak self] sectionIndex, layoutEnvironment in
@@ -247,7 +250,7 @@ extension SearchViewController {
 }
 
 // DataSource
-extension SearchViewController {
+extension SearchBookViewController {
   private func configureDataSource() {
     dataSource = UICollectionViewDiffableDataSource<SearchBookSection, SearchBookSectionItem>(collectionView: collectionView) { collectionView, indexPath, item in
       switch item {
@@ -292,7 +295,7 @@ extension SearchViewController {
 }
 
 // Test
-extension SearchViewController {
+extension SearchBookViewController {
   
   private func setupNavigationBarMenu() {
     let apiItems = BookAPI.allCases.map { apiType in

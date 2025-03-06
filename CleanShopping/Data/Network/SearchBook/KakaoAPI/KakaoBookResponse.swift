@@ -56,3 +56,7 @@ struct KakaoDocumentDTO: Decodable, BookDTOProtocol {
                 description: contents)
   }
 }
+
+enum KakaoBookResponseError: Error {
+  case responseError
+}

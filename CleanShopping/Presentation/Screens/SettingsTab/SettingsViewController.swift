@@ -10,6 +10,9 @@ import SnapKit
 
 final class SettingsViewController: BaseViewController {
   
+  // 다크모드
+  // 언어
+  
   override func viewDidLoad() {
     super.viewDidLoad()
   }
