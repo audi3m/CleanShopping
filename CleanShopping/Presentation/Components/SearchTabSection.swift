@@ -21,35 +21,20 @@ enum SearchBookSection: Int, CaseIterable {
 
 
 // RxDataSource
-
 enum SearchBookSectionItem2 {
-  case headerItem(api: BookAPI)
-  case bodyItem(book: Book)
+  case headerItem(BookAPI)
+  case bodyItem(Book)
+//  case thirdSection
 }
 
-enum SearchBookSectionModel2 {
-  case headerSection(items: [SearchBookSectionItem2])
-  case bodySection(items: [SearchBookSectionItem2])
+struct SearchBookSectionModel2 {
+  var header: String
+  var items: [SearchBookSectionItem2]
 }
 
 extension SearchBookSectionModel2: SectionModelType {
-  typealias Item = SearchBookSectionItem2
-  
-  var items: [SearchBookSectionItem2] {
-    switch self {
-    case .headerSection(let items):
-      return items
-    case .bodySection(let items):
-      return items
-    }
-  }
-  
   init(original: SearchBookSectionModel2, items: [SearchBookSectionItem2]) {
-    switch original {
-    case .headerSection:
-      self = .headerSection(items: items)
-    case .bodySection:
-      self = .bodySection(items: items)
-    }
+    self = original
+    self.items = items
   }
 }
