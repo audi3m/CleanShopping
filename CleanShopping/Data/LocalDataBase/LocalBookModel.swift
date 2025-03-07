@@ -1,5 +1,5 @@
 //
-//  LocalBookDTO.swift
+//  LocalBookModel.swift
 //  CleanShopping
 //
 //  Created by J Oh on 3/7/25.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class BookDTO {
+final class LocalBookModel {
   var id = UUID()
   var title: String
   var link: String
@@ -35,13 +35,3 @@ final class BookDTO {
   
 }
 
-//let id = UUID()
-//let title: String
-//let link: String
-//let image: String
-//let author: String
-//let discount: String?
-//let publisher: String
-//let pubdate: String
-//let isbn: String
-//let description: String
