@@ -1,5 +1,5 @@
 //
-//  BookRemoteDataSource.swift
+//  SearchBookDataSource.swift
 //  CleanShopping
 //
 //  Created by J Oh on 3/3/25.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-protocol BookRemoteDataSource {
+protocol SearchBookDataSource {
   func searchBooks()
 }
 
-final class BookRemoteDataSourceImpl: BookRemoteDataSource {
+final class BookRemoteDataSourceImpl: SearchBookDataSource {
   
   func searchBooks() {
     

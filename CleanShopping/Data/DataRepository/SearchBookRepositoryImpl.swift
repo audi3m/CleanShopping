@@ -1,5 +1,5 @@
 //
-//  SearchRepositoryImpl.swift
+//  SearchBookRepositoryImpl.swift
 //  CleanShopping
 //
 //  Created by J Oh on 2/27/25.
@@ -8,12 +8,12 @@
 import Foundation
 import RxSwift
 
-final class SearchRepositoryImpl: SearchBookRepository {
+final class SearchBookRepositoryImpl: SearchBookRepository {
   
-  private let dataSource: BookRemoteDataSource
+  private let dataSource: SearchBookDataSource
   private let networkManager: BookNetworkManager
   
-  init(dataSource: BookRemoteDataSource, networkManager: BookNetworkManager) {
+  init(dataSource: SearchBookDataSource, networkManager: BookNetworkManager) {
     self.dataSource = dataSource
     self.networkManager = networkManager
   }
@@ -32,7 +32,7 @@ final class SearchRepositoryImpl: SearchBookRepository {
   
 }
 
-extension SearchRepositoryImpl {
+extension SearchBookRepositoryImpl {
   
   func searchBookSingle(bookRequest: BookRequest) -> Single<Result<BookResponse, BookRequestError>> {
     return Single.create { [weak self] single -> Disposable in
@@ -71,7 +71,7 @@ extension SearchRepositoryImpl {
 }
 
 // @escaping
-extension SearchRepositoryImpl {
+extension SearchBookRepositoryImpl {
   
   func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, BookRequestError>) -> Void) {
     switch bookRequest.api {
@@ -101,7 +101,7 @@ extension SearchRepositoryImpl {
 }
  
 // async/await
-extension SearchRepositoryImpl {
+extension SearchBookRepositoryImpl {
   func searchBookAsync(bookRequest: BookRequest) async throws -> BookResponse {
     switch bookRequest.api {
     case .naver:

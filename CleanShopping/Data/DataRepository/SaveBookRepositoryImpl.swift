@@ -1,5 +1,5 @@
 //
-//  LocalBookRepositoryImpl.swift
+//  SaveBookRepositoryImpl.swift
 //  CleanShopping
 //
 //  Created by J Oh on 3/5/25.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-final class LocalBookRepositoryImpl: LocalBookRepository {
-  private let dataSource: BookLocalDataSource
+final class SaveBookRepositoryImpl: LocalBookRepository {
+  private let dataSource: SaveBookDataSource
   
-  init(dataSource: BookLocalDataSource) {
+  init(dataSource: SaveBookDataSource) {
     self.dataSource = dataSource
   }
   
