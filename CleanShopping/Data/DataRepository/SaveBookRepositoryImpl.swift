@@ -7,27 +7,28 @@
 
 import Foundation
 
-final class SaveBookRepositoryImpl: LocalBookRepository {
+final class SaveBookRepositoryImpl: SaveBookRepository {
+  
   private let dataSource: SaveBookDataSource
   
   init(dataSource: SaveBookDataSource) {
     self.dataSource = dataSource
   }
   
-  func fetchBooks() {
-    dataSource.fetchBooks()
+  func fetchBooks() -> [Book] {
+    return dataSource.fetchBooks().map { LocalBookMapper.toDomain($0) }
   }
   
-  func saveBook() {
-    dataSource.saveBook()
+  func saveBook(book: Book) {
+    let newBook = LocalBookMapper.toDTO(book)
+    dataSource.saveBook(book: newBook)
   }
   
-  func updateBook() {
-    dataSource.updateBook()
-  }
+//  func updateBook() { }
   
-  func deleteBook() {
-    dataSource.deleteBook()
+  func deleteBook(book: Book) {
+    let id = book.id
+    dataSource.deleteBook(by: id)
   }
   
 }
