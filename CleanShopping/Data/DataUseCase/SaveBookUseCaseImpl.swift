@@ -10,26 +10,22 @@ import SwiftData
 
 final class SaveBookUseCaseImpl: SaveBookUseCase {
   
-  private let repository: LocalBookRepository
+  private let repository: SaveBookRepository
   
-  init(repository: LocalBookRepository) {
+  init(repository: SaveBookRepository) {
     self.repository = repository
   }
   
-  func executeFetch() {
-    repository.fetchBooks()
+  func executeFetch() -> [Book] {
+    return repository.fetchBooks()
   }
   
   func executeSave(book: Book) {
-    repository.saveBook()
-  }
-  
-  func executeUpdate(book: Book) {
-    repository.updateBook()
+    repository.saveBook(book: book)
   }
   
   func executeDelete(book: Book) {
-    repository.deleteBook()
+    repository.deleteBook(book: book)
   }
   
 }
