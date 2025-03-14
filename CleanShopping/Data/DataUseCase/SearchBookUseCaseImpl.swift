@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 final class SearchBookUseCaseImpl: SearchBookUseCase {
   
@@ -15,10 +16,8 @@ final class SearchBookUseCaseImpl: SearchBookUseCase {
     self.repository = repository
   }
   
-  func executeSearch() {
-    repository.searchBook()
-//    repository.searchBookSingle()
-//    repository.searchBookAsync()
+  func executeSearch(bookRequest: BookRequest) -> Single<Result<BookResponse, BookRequestError>> {
+    return repository.searchBookSingle(bookRequest: bookRequest)
   }
   
 }

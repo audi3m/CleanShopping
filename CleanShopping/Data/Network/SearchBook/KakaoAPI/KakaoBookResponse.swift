@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct KakaoBookResponseDTO: Decodable {
+struct KakaoBookResponseDTO: Decodable, BookResponseProtocol {
   let meta: KakaoMetaDTO
   let documents: [KakaoDocumentDTO]
   

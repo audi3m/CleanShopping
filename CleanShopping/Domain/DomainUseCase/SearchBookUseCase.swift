@@ -6,7 +6,8 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol SearchBookUseCase {
-  func executeSearch()
+  func executeSearch(bookRequest: BookRequest) -> Single<Result<BookResponse, BookRequestError>>
 }

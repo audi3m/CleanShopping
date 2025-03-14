@@ -6,10 +6,15 @@
 //
 
 import Foundation
+import Differentiator
 
-enum BookAPI: String, CaseIterable {
+enum BookAPI: String, CaseIterable, IdentifiableType, Equatable {
   case naver = "네이버"
   case kakao = "카카오"
+  
+  var identity: String {
+    return self.rawValue
+  }
 }
 
 enum SortOption: Int, CaseIterable {

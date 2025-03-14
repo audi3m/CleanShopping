@@ -31,36 +31,29 @@ final class SearchBookViewController: BaseViewController {
     return collectionView
   }()
   
-  private var dataSource: UICollectionViewDiffableDataSource<SearchBookSection, SearchBookSectionItem>!
+  //  private var dataSource: UICollectionViewDiffableDataSource<SearchBookSection, SearchBookSectionItem>!
   
-  private let dataSource2 = RxCollectionViewSectionedReloadDataSource<SearchBookSectionModel2> { dataSource, collectionView, indexPath, sectionType in
-    switch sectionType {
-    case .headerItem(let api):
-      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookApiSelectionCollectionViewCell.id, for: indexPath) as? BookApiSelectionCollectionViewCell else {
-        return UICollectionViewCell()
-      }
-      cell.configureData(api: api)
-      return cell
-    case .bodyItem(let book):
-      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as? BookCollectionViewCell else {
-        return UICollectionViewCell()
-      }
-      cell.configureData(book: book)
-      return cell
-    }
-  }
+  //  private let dataSource2 = RxCollectionViewSectionedReloadDataSource<SearchBookSectionModel2> { dataSource, collectionView, indexPath, sectionType in
+  //    switch sectionType {
+  //    case .headerItem(let api):
+  //      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookApiSelectionCollectionViewCell.id, for: indexPath) as? BookApiSelectionCollectionViewCell else {
+  //        return UICollectionViewCell()
+  //      }
+  //      cell.configureData(api: api)
+  //      return cell
+  //    case .bodyItem(let book):
+  //      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as? BookCollectionViewCell else {
+  //        return UICollectionViewCell()
+  //      }
+  //      cell.configureData(book: book)
+  //      return cell
+  //    }
+  //  }
   
   private let disposeBag = DisposeBag()
-  private let viewModel: SearchBookViewModel
+  private let viewModel: SearchBookViewModel2
   
-  var api = BookAPI.naver
-  var query = ""
-  var page = 1
-  var sort = SortOption.accuracy
-  
-  var isEndPage = false
-  
-  init(viewModel: SearchBookViewModel) {
+  init(viewModel: SearchBookViewModel2) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -72,9 +65,9 @@ final class SearchBookViewController: BaseViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     rxBind()
-    configureDataSource()
-    initialSnapshot()
-    setupNavigationBarMenu()
+    //    configureDataSource()
+    //    initialSnapshot()
+//    setupNavigationBarMenu()
   }
   
   override func setHierarchy() {
@@ -108,7 +101,7 @@ extension SearchBookViewController {
       .disposed(by: disposeBag)
     
     searchBar.rx.text.orEmpty
-      .bind(to: viewModel.input.query)
+      .bind(to: viewModel.input.searchQuery)
       .disposed(by: disposeBag)
     
     collectionView.rx
@@ -120,11 +113,13 @@ extension SearchBookViewController {
         return position >= self.collectionView.contentSize.height
       }
       .map { _ in }
-      .bind(to: viewModel.input.searchButtonClicked)
+      .bind(to: viewModel.input.loadMore)
       .disposed(by: disposeBag)
     
+    let dataSource = makeRxDataSource()
+    
     viewModel.output.dataSource
-      .bind(to: collectionView.rx.items(dataSource: dataSource2))
+      .bind(to: collectionView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
     
     viewModel.output.optionChanged
@@ -136,23 +131,44 @@ extension SearchBookViewController {
   }
 }
 
-// Search Bar
-extension SearchBookViewController: UISearchBarDelegate {
-  
-  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    resetProperties()
-    query = searchBar.text ?? ""
-    
-    Task {
-      do {
-        let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
-        appendItems(newItems: bookResponse.books)
-      } catch {
-        print("Error fetching next page: \(error)")
+// RxDataSource
+extension SearchBookViewController {
+  private func makeRxDataSource() -> RxCollectionViewSectionedAnimatedDataSource<SearchBookSectionModel2> {
+    return RxCollectionViewSectionedAnimatedDataSource<SearchBookSectionModel2> { dataSource, collectionView, indexPath, sectionType in
+      switch sectionType {
+      case .headerItem(let api):
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookApiSelectionCollectionViewCell.id, for: indexPath) as? BookApiSelectionCollectionViewCell else {
+          return UICollectionViewCell()
+        }
+        cell.configureData(api: api)
+        return cell
+      case .bodyItem(let book):
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as? BookCollectionViewCell else {
+          return UICollectionViewCell()
+        }
+        cell.configureData(book: book)
+        return cell
       }
     }
   }
-  
+}
+
+// Search Bar
+extension SearchBookViewController: UISearchBarDelegate {
+
+  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//    resetProperties()
+
+//    Task {
+//      do {
+//        let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
+//        appendItems(newItems: bookResponse.books)
+//      } catch {
+//        print("Error fetching next page: \(error)")
+//      }
+//    }
+  }
+
 }
 
 // CollectionView Delegate
@@ -163,49 +179,38 @@ extension SearchBookViewController: UICollectionViewDelegate {
 // CollectionView Prefetch
 extension SearchBookViewController: UICollectionViewDataSourcePrefetching {
   func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-    guard !isEndPage else { return }
     
-    let currentItemCount = dataSource.snapshot().itemIdentifiers.count
-    for indexPath in indexPaths {
-      if indexPath.item == currentItemCount - 3 {
-        page += 1
-        Task {
-          do {
-            let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
-            handleValidResponse(response: bookResponse)
-          } catch {
-            page -= 1
-            print("Error fetching next page: \(error)")
-          }
-        }
-      }
-    }
   }
   
+//  func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+//    guard !isEndPage else { return }
+//
+//    let currentItemCount = dataSource.snapshot().itemIdentifiers.count
+//    for indexPath in indexPaths {
+//      if indexPath.item == currentItemCount - 3 {
+//        page += 1
+//        Task {
+//          do {
+//            let bookResponse = try await getSearchResults(api: api, query: query, page: page, sort: sort)
+//            handleValidResponse(response: bookResponse)
+//          } catch {
+//            page -= 1
+//            print("Error fetching next page: \(error)")
+//          }
+//        }
+//      }
+//    }
+//  }
+
 }
 
 // Network Request
 extension SearchBookViewController {
   
-  private func handleValidResponse(response: BookResponse) {
-    isEndPage = response.isEnd
-    appendItems(newItems: response.books)
-  }
-  
-  private func getSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
-    guard !query.isEmpty else { return BookResponse(totalCount: 0, books: [], isEnd: true) }
-    let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
-    let bookResponse = try await viewModel.getSearchResultsAsync(bookRequest: bookRequest)
-    return bookResponse
-  }
-  
-  private func resetProperties() {
-    clearAllItems()
-    query = ""
-    page = 1
-    isEndPage = false
-    collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
-  }
+//  private func handleValidResponse(response: BookResponse) {
+//    isEndPage = response.isEnd
+//    appendItems(newItems: response.books)
+//  }
   
 }
 
@@ -250,65 +255,65 @@ extension SearchBookViewController {
 }
 
 // DataSource
-extension SearchBookViewController {
-  private func configureDataSource() {
-    dataSource = UICollectionViewDiffableDataSource<SearchBookSection, SearchBookSectionItem>(collectionView: collectionView) { collectionView, indexPath, item in
-      switch item {
-      case .filterOption(let api):
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookApiSelectionCollectionViewCell.id, for: indexPath) as! BookApiSelectionCollectionViewCell
-        cell.configureData(api: api)
-        return cell
-      case .listData(let book):
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as! BookCollectionViewCell
-        cell.configureData(book: book)
-        return cell
-      }
-    }
-  }
-  
-  private func initialSnapshot() {
-    var snapshot = NSDiffableDataSourceSnapshot<SearchBookSection, SearchBookSectionItem>()
-    snapshot.appendSections([.filter, .list])
-    
-    let filterItems = BookAPI.allCases.map { SearchBookSectionItem.filterOption($0) }
-    snapshot.appendItems(filterItems, toSection: .filter)
-    
-    let listItems = [SearchBookSectionItem]()
-    snapshot.appendItems(listItems, toSection: .list)
-    
-    dataSource.apply(snapshot, animatingDifferences: true)
-  }
-  
-  private func appendItems(newItems: [Book]) {
-    var snapshot = dataSource.snapshot()
-    let items = newItems.map { SearchBookSectionItem.listData($0) }
-    snapshot.appendItems(items, toSection: .list)
-    dataSource.apply(snapshot, animatingDifferences: true)
-  }
-  
-  private func clearAllItems() {
-    var snapshot = dataSource.snapshot()
-    snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .list))
-    dataSource.apply(snapshot, animatingDifferences: true)
-  }
-  
-}
+//extension SearchBookViewController {
+//  private func configureDataSource() {
+//    dataSource = UICollectionViewDiffableDataSource<SearchBookSection, SearchBookSectionItem>(collectionView: collectionView) { collectionView, indexPath, item in
+//      switch item {
+//      case .filterOption(let api):
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookApiSelectionCollectionViewCell.id, for: indexPath) as! BookApiSelectionCollectionViewCell
+//        cell.configureData(api: api)
+//        return cell
+//      case .listData(let book):
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCollectionViewCell.id, for: indexPath) as! BookCollectionViewCell
+//        cell.configureData(book: book)
+//        return cell
+//      }
+//    }
+//  }
+//
+//  private func initialSnapshot() {
+//    var snapshot = NSDiffableDataSourceSnapshot<SearchBookSection, SearchBookSectionItem>()
+//    snapshot.appendSections([.filter, .list])
+//
+//    let filterItems = BookAPI.allCases.map { SearchBookSectionItem.filterOption($0) }
+//    snapshot.appendItems(filterItems, toSection: .filter)
+//
+//    let listItems = [SearchBookSectionItem]()
+//    snapshot.appendItems(listItems, toSection: .list)
+//
+//    dataSource.apply(snapshot, animatingDifferences: true)
+//  }
+//
+//  private func appendItems(newItems: [Book]) {
+//    var snapshot = dataSource.snapshot()
+//    let items = newItems.map { SearchBookSectionItem.listData($0) }
+//    snapshot.appendItems(items, toSection: .list)
+//    dataSource.apply(snapshot, animatingDifferences: true)
+//  }
+//
+//  private func clearAllItems() {
+//    var snapshot = dataSource.snapshot()
+//    snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .list))
+//    dataSource.apply(snapshot, animatingDifferences: true)
+//  }
+//
+//}
 
 // Test
 extension SearchBookViewController {
   
   private func setupNavigationBarMenu() {
     let apiItems = BookAPI.allCases.map { apiType in
-      UIAction(title: apiType.rawValue, state: viewModel.input.api.value == apiType ? .on : .off) { [weak self] _ in
+      UIAction(title: apiType.rawValue, state: viewModel.input.searchAPI.value == apiType ? .on : .off) { [weak self] _ in
         guard let self else { return }
-        self.viewModel.input.api.accept(apiType)
+        self.viewModel.input.searchAPI.accept(apiType)
       }
     }
     
     let sortItems = SortOption.allCases.map { sortType in
-      UIAction(title: sortType.stringValue, state: viewModel.input.sortOption.value == sortType ? .on : .off) { [weak self] _ in
+      UIAction(title: sortType.stringValue, state: viewModel.input.searchSort.value == sortType ? .on : .off) { [weak self] _ in
         guard let self else { return }
-        self.viewModel.input.sortOption.accept(sortType)
+        self.viewModel.input.searchSort.accept(sortType)
       }
     }
     

@@ -18,38 +18,35 @@ enum SearchBookSection: Int, CaseIterable {
   case list
 }
 
-
-
+// Model 2
 // RxDataSource
-
-enum SearchBookSectionItem2 {
-  case headerItem(api: BookAPI)
-  case bodyItem(book: Book)
-}
-
-enum SearchBookSectionModel2 {
-  case headerSection(items: [SearchBookSectionItem2])
-  case bodySection(items: [SearchBookSectionItem2])
-}
-
-extension SearchBookSectionModel2: SectionModelType {
-  typealias Item = SearchBookSectionItem2
+enum SearchBookSectionItem2: IdentifiableType, Equatable {
+  case headerItem(BookAPI)
+  case bodyItem(Book)
+  //  case thirdSection(Model)
   
-  var items: [SearchBookSectionItem2] {
+  var identity: String {
     switch self {
-    case .headerSection(let items):
-      return items
-    case .bodySection(let items):
-      return items
+    case .headerItem(let api):
+      return api.identity
+    case .bodyItem(let book):
+      return book.identity.uuidString
     }
   }
-  
+}
+
+struct SearchBookSectionModel2 {
+  var header: String
+  var items: [SearchBookSectionItem2]
+}
+
+extension SearchBookSectionModel2: AnimatableSectionModelType {
   init(original: SearchBookSectionModel2, items: [SearchBookSectionItem2]) {
-    switch original {
-    case .headerSection:
-      self = .headerSection(items: items)
-    case .bodySection:
-      self = .bodySection(items: items)
-    }
+    self = original
+    self.items = items
+  }
+  
+  var identity: String {
+    return header
   }
 }
