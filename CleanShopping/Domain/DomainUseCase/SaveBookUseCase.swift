@@ -8,8 +8,17 @@
 import Foundation
 
 protocol SaveBookUseCase {
-  func executeFetch()
   func executeSave(book: Book)
-  func executeUpdate(book: Book)
+}
+
+protocol FetchBooksUseCase {
+  func executeFetch() -> [Book]
+}
+
+protocol UpdateBooksUseCase {
+  func executeUpdate() -> [Book]
+}
+
+protocol DeleteBookUseCase {
   func executeDelete(book: Book)
 }
