@@ -8,8 +8,8 @@
 import Foundation
 
 protocol SaveBookRepository {
-  func fetchBooks()
-  func saveBook()
-  func updateBook()
-  func deleteBook()
+  func fetchBooks() -> [Book]
+  func saveBook(book: Book)
+//  func updateBook()
+  func deleteBook(book: Book)
 }
