@@ -33,19 +33,23 @@ final class BookLocalDataSourceImpl: SaveBookDataSource {
   
   func fetchBooks() -> [LocalBookModel] {
     do {
-      return try modelContext.fetch(FetchDescriptor<LocalBookModel>())
+      let list = try modelContext.fetch(FetchDescriptor<LocalBookModel>())
+      print("Fetch like books")
+      return list
     } catch {
-      fatalError("error fetchDatas\n\(error.localizedDescription)")
+      fatalError("Error fetching data\n\(error.localizedDescription)")
     }
   }
   
   func saveBook(book: LocalBookModel) {
     modelContext.insert(book)
+    print("Save new book: \(book.title)")
   }
   
   func deleteBook(by id: UUID) {
     if let book = getBook(by: id) {
       modelContext.delete(book)
+      print("Delete book: \(book.title)")
     } else {
       print("Fail to fetch book of id: \(id)")
     }
