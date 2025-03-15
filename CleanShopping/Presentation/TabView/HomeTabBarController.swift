@@ -1,5 +1,5 @@
 //
-//  ShoppingTabView.swift
+//  HomeTabBarController.swift
 //  CleanShopping
 //
 //  Created by J Oh on 1/18/25.
@@ -10,7 +10,16 @@ import SnapKit
 
 final class HomeTabBarController: UITabBarController {
   
-  let container = DIContainer()
+  private let container: DIContainer
+  
+  init(container: DIContainer) {
+    self.container = container
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -27,13 +36,14 @@ extension HomeTabBarController {
   
   private func setTabItems() {
     let viewControllers = TabItems.allCases.map { tabItem -> UIViewController in
-      let viewController = tabItem.viewController
+      let viewController = tabItem.setViewController(with: container) // container 전달
       viewController.tabBarItem = UITabBarItem(title: tabItem.rawValue, image: tabItem.icon, tag: tabItem.tag)
       return viewController
     }
     
     self.viewControllers = viewControllers
   }
+  
 }
 
 extension HomeTabBarController {
@@ -54,12 +64,14 @@ extension HomeTabBarController {
       }
     }
     
-    var viewController: UIViewController {
+    @MainActor
+    func setViewController(with container: DIContainer) -> UIViewController {
       switch self {
       case .search:
+        let viewModel = SearchBookViewModel(searchBookUseCase: container.searchBookUseCase,
+                                             saveBookUseCase: container.saveBookUseCase)
         return UINavigationController(
-          rootViewController: SearchBookViewController(viewModel: SearchBookViewModel2(searchBookUseCase: SearchBookUseCaseImpl(repository: <#T##any SearchBookRepository#>),
-                                                                                       saveBookUseCase: SaveBookUseCaseImpl(repository: <#T##any SaveBookRepository#>)))
+          rootViewController: SearchBookViewController(viewModel: viewModel)
         )
       case .likes:
         return UINavigationController(rootViewController: LikeBookViewController())
