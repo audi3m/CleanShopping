@@ -10,6 +10,8 @@ import SnapKit
 
 final class HomeTabBarController: UITabBarController {
   
+  let container = DIContainer()
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     configureTabBar()
@@ -55,8 +57,10 @@ extension HomeTabBarController {
     var viewController: UIViewController {
       switch self {
       case .search:
-        return UINavigationController(rootViewController: SearchBookViewController(searchBookRepository: SearchBookRepository.shared,
-                                                                                   viewModel: SearchBookViewModel(searchBookRepository: SearchBookRepository.shared)))
+        return UINavigationController(
+          rootViewController: SearchBookViewController(viewModel: SearchBookViewModel2(searchBookUseCase: SearchBookUseCaseImpl(repository: <#T##any SearchBookRepository#>),
+                                                                                       saveBookUseCase: SaveBookUseCaseImpl(repository: <#T##any SaveBookRepository#>)))
+        )
       case .likes:
         return UINavigationController(rootViewController: LikeBookViewController())
       case .settings:
