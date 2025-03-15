@@ -9,26 +9,29 @@ import Foundation
 import SwiftData
 
 protocol SaveBookDataSource {
-  func fetchBooks() -> [LocalBookModel]
-  func saveBook(book: LocalBookModel)
-  func deleteBook(by id: UUID)
+  func fetchBooks() async -> [LocalBookModel]
+  func saveBook(book: LocalBookModel) async
+  func deleteBook(by id: UUID) async
 }
 
-final class BookLocalDataSourceImpl: SaveBookDataSource {
+@MainActor
+final class SaveBookDataSourceImpl: SaveBookDataSource {
   
   private let modelContainer: ModelContainer
   private let modelContext: ModelContext
   
-  @MainActor
-  static let shared = BookLocalDataSourceImpl()
+  static let shared = SaveBookDataSourceImpl()
   
-  @MainActor
-  private init() {
-    self.modelContainer = try! ModelContainer(
-      for: LocalBookModel.self,
-      configurations: ModelConfiguration(isStoredInMemoryOnly: false)
-    )
-    self.modelContext = modelContainer.mainContext
+  init() {
+    do {
+      self.modelContainer = try ModelContainer(
+        for: LocalBookModel.self,
+        configurations: ModelConfiguration(isStoredInMemoryOnly: false)
+      )
+      self.modelContext = modelContainer.mainContext
+    } catch {
+      fatalError("ModelContainer 생성 실패: \(error)")
+    }
   }
   
   func fetchBooks() -> [LocalBookModel] {
