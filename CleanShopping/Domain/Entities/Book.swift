@@ -10,7 +10,7 @@ import Differentiator
 
 struct Book: Identifiable, Hashable, IdentifiableType, Equatable {
   
-  let id = UUID()
+  var id = UUID()
   let title: String
   let link: String
   let image: String
