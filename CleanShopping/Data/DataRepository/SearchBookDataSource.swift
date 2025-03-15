@@ -9,9 +9,9 @@ import Foundation
 import RxSwift
 
 protocol SearchBookDataSource {
-  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponseProtocol, BookRequestError>) -> Void)
+//  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponseProtocol, BookRequestError>) -> Void)
   func searchBookSingle(bookRequest: BookRequest) -> Single<Result<BookResponseProtocol, BookRequestError>>
-  func searchBookAsync(bookRequest: BookRequest) async throws -> BookResponseProtocol
+//  func searchBookAsync(bookRequest: BookRequest) async throws -> BookResponseProtocol
 }
 
 final class BookRemoteDataSourceImpl: SearchBookDataSource {
@@ -25,32 +25,32 @@ final class BookRemoteDataSourceImpl: SearchBookDataSource {
 }
 
 // @escaping
-extension BookRemoteDataSourceImpl {
-  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponseProtocol, BookRequestError>) -> Void) {
-    switch bookRequest.api {
-    case .naver:
-      let params = bookRequest.toDTO() as! NaverBookRequestParameters
-      networkManager.request(target: .naver(param: params), of: NaverBookResponseDTO.self) { result in
-        switch result {
-        case .success(let value):
-          handler(.success(value))
-        case .failure:
-          handler(.failure(.badRequest))
-        }
-      }
-    case .kakao:
-      let params = bookRequest.toDTO() as! KakaoBookRequestParameters
-      networkManager.request(target: .kakao(param: params), of: KakaoBookResponseDTO.self) { result in
-        switch result {
-        case .success(let value):
-          handler(.success(value))
-        case .failure:
-          handler(.failure(.badRequest))
-        }
-      }
-    }
-  }
-}
+//extension BookRemoteDataSourceImpl {
+//  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponseProtocol, BookRequestError>) -> Void) {
+//    switch bookRequest.api {
+//    case .naver:
+//      let params = bookRequest.toDTO() as! NaverBookRequestParameters
+//      networkManager.request(target: .naver(param: params), of: NaverBookResponseDTO.self) { result in
+//        switch result {
+//        case .success(let value):
+//          handler(.success(value))
+//        case .failure:
+//          handler(.failure(.badRequest))
+//        }
+//      }
+//    case .kakao:
+//      let params = bookRequest.toDTO() as! KakaoBookRequestParameters
+//      networkManager.request(target: .kakao(param: params), of: KakaoBookResponseDTO.self) { result in
+//        switch result {
+//        case .success(let value):
+//          handler(.success(value))
+//        case .failure:
+//          handler(.failure(.badRequest))
+//        }
+//      }
+//    }
+//  }
+//}
 
 // Single
 extension BookRemoteDataSourceImpl {
@@ -91,17 +91,17 @@ extension BookRemoteDataSourceImpl {
 }
 
 // async/await
-extension BookRemoteDataSourceImpl {
-  func searchBookAsync(bookRequest: BookRequest) async throws -> BookResponseProtocol {
-    switch bookRequest.api {
-    case .naver:
-      let params = bookRequest.toDTO() as! NaverBookRequestParameters
-      let response = try await networkManager.requestAsync(target: .naver(param: params), of: NaverBookResponseDTO.self)
-      return response
-    case .kakao:
-      let params = bookRequest.toDTO() as! KakaoBookRequestParameters
-      let response = try await networkManager.requestAsync(target: .kakao(param: params), of: KakaoBookResponseDTO.self)
-      return response
-    }
-  }
-}
+//extension BookRemoteDataSourceImpl {
+//  func searchBookAsync(bookRequest: BookRequest) async throws -> BookResponseProtocol {
+//    switch bookRequest.api {
+//    case .naver:
+//      let params = bookRequest.toDTO() as! NaverBookRequestParameters
+//      let response = try await networkManager.requestAsync(target: .naver(param: params), of: NaverBookResponseDTO.self)
+//      return response
+//    case .kakao:
+//      let params = bookRequest.toDTO() as! KakaoBookRequestParameters
+//      let response = try await networkManager.requestAsync(target: .kakao(param: params), of: KakaoBookResponseDTO.self)
+//      return response
+//    }
+//  }
+//}

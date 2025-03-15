@@ -1,5 +1,5 @@
 //
-//  SearchBookViewModel2.swift
+//  SearchBookViewModel.swift
 //  CleanShopping
 //
 //  Created by J Oh on 3/5/25.
@@ -148,14 +148,6 @@ extension SearchBookViewModel {
 }
 
 // Save
-extension SearchBookViewModel {
-  
-}
-
-extension SearchBookViewModel {
-  
-}
-
 extension SearchBookViewModel {
   
 }
