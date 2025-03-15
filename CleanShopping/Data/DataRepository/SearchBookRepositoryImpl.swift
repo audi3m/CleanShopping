@@ -10,6 +10,7 @@ import RxSwift
 
 enum BookRequestError: Error {
   case badRequest
+  case badResponse
 }
 
 final class SearchBookRepositoryImpl: SearchBookRepository {
@@ -20,39 +21,33 @@ final class SearchBookRepositoryImpl: SearchBookRepository {
     self.dataSource = dataSource
   }
   
-  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, Error>) -> Void) {
-    dataSource.searchBook(bookRequest: bookRequest) { result in
-      switch result {
-      case .success(let response):
-        handler(.success(response.toDomain()))
-      case .failure(let error):
-        print(error.localizedDescription)
-      }
-    }
-  }
+//  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, Error>) -> Void) {
+//    dataSource.searchBook(bookRequest: bookRequest) { result in
+//      switch result {
+//      case .success(let response):
+//        handler(.success(response.toDomain()))
+//      case .failure(let error):
+//        print(error.localizedDescription)
+//      }
+//    }
+//  }
   
-  func searchBookSingle(bookRequest: BookRequest) -> Single<BookResponse> {
+  func searchBookSingle(bookRequest: BookRequest) -> Single<Result<BookResponse, BookRequestError>> {
     return dataSource.searchBookSingle(bookRequest: bookRequest)
-      .flatMap { result -> Single<BookResponse> in
+      .flatMap { result -> Single<Result<BookResponse, BookRequestError>> in
         switch result {
         case .success(let response):
           if let naverResponse = response as? NaverBookResponseDTO {
-            return .just(NetworkBookMapper.toDomainResponse(response: naverResponse))
+            return .just(.success(NetworkBookMapper.toDomainResponse(response: naverResponse)))
           } else if let kakaoResponse = response as? KakaoBookResponseDTO {
-            return .just(NetworkBookMapper.toDomainResponse(response: kakaoResponse))
+            return .just(.success(NetworkBookMapper.toDomainResponse(response: kakaoResponse)))
           } else {
-            return .error(BookRequestError.badRequest)
+            return .just(.failure(BookRequestError.badResponse))
           }
         case .failure(let error):
-          return .error(error)
+          return .just(.failure(error))
         }
       }
   }
-  
-  func searchBookAsync(bookRequest: BookRequest) {
-    
-  }
-  
-  
   
 }

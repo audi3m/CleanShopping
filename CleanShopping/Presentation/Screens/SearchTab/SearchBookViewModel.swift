@@ -1,152 +1,153 @@
-////
-////  SearchBookViewModel.swift
-////  CleanShopping
-////
-////  Created by J Oh on 1/18/25.
-////
 //
-//import Foundation
-//import RxSwift
-//import RxCocoa
-//import RxDataSources
+//  SearchBookViewModel.swift
+//  CleanShopping
 //
-//final class SearchBookViewModel {
-//  private let disposeBag = DisposeBag()
-//  
-//  private let searchBookUseCase: SearchBookUseCase
-//  private let saveBookUseCase: SaveBookUseCase
-//  
-//  var input = Input()
-//  var output = Output()
-//  
-//  var searchPage = BehaviorRelay<Int>(value: 1)
-//  var isLastPage = BehaviorRelay<Bool>(value: false)
-//  
-//  init(searchBookUseCase: SearchBookUseCase,
-//       saveBookUseCase: SaveBookUseCase) {
-//    
-//    self.searchBookUseCase = searchBookUseCase
-//    self.saveBookUseCase = saveBookUseCase
-//    
-//    transform()
-//  }
-//  
-//}
+//  Created by J Oh on 3/5/25.
 //
-//extension SearchBookViewModel {
-//  func transform() {
-//    
-//    Observable.combineLatest(input.api, input.sortOption)
-//      .map { _ in }
-//      .bind(to: output.optionChanged)
-//      .disposed(by: disposeBag)
-//  }
-//}
-//
-//extension SearchBookViewModel {
-//  struct Input {
-//    var api = BehaviorRelay<BookAPI>(value: .naver)
-//    var query = PublishRelay<String>()
-//    var sortOption = BehaviorRelay<SortOption>(value: .accuracy)
-//    var searchButtonClicked = PublishRelay<Void>()
-//    var tappedBook = PublishRelay<Book>()
-//  }
-//  
-//  struct Output {
-//    var dataSource = BehaviorRelay<[SearchBookSectionModel2]>(value: [])
-//    var tappedBook = PublishRelay<Book>()
-//    var optionChanged = PublishRelay<Void>()
-//  }
-//  
-//}
-//
-//// UseCase Search
-//extension SearchBookViewModel {
-//  func getSearchResults() {
-//    
-//  }
-//}
-//
-//// Search
-//extension SearchBookViewModel {
-//  
-//  // RxDataSource
-//  func fetchSearchResults(api: BookAPI, query: String, page: Int, sort: SortOption) {
-//    let bookrequest = BookRequest(api: api, query: query, page: page, sort: sort)
-//    
-//    searchBookUseCase.searchBookSingle(bookRequest: bookrequest)
-//      .observe(on: MainScheduler.instance)
-//      .subscribe(onSuccess: { [weak self] result in
-//        guard let self else { return }
-//        switch result {
-//        case .success(let value):
-//          let books = value.books.map { SearchBookSectionItem2.bodyItem(book: $0) }
-//          let headerSection = SearchBookSectionModel2.headerSection(items: [.headerItem(api: api)])
-//          
-//          var updatedSections = self.output.dataSource.value
-//          
-//          if let bodyIndex = updatedSections.firstIndex(where: {
-//            if case .bodySection = $0 { return true }
-//            return false
-//          }) {
-//            if page == 1 {
-//              updatedSections[bodyIndex] = .bodySection(items: books)
-//            } else {
-//              if case .bodySection(let existingItems) = updatedSections[bodyIndex] {
-//                updatedSections[bodyIndex] = .bodySection(items: existingItems + books)
-//              }
-//            }
-//          } else {
-//            updatedSections.append(.bodySection(items: books))
-//          }
-//          
-//          if updatedSections.first(where: {
-//            if case .headerSection = $0 { return true }
-//            return false
-//          }) == nil {
-//            updatedSections.insert(headerSection, at: 0)
-//          }
-//          
-//          self.output.dataSource.accept(updatedSections)
-//          
-//        case .failure(let error):
-//          print(error.localizedDescription)
-//        }
-//      }, onFailure: { error in
-//        print(error.localizedDescription)
-//      })
-//      .disposed(by: disposeBag)
-//  }
-//  
-//  // async await
-//  func getSearchResultsAsync(api: BookAPI, query: String, page: Int, sort: SortOption) async throws -> BookResponse {
-//    let bookRequest = BookRequest(api: api, query: query, page: page, sort: sort)
-//    let bookResponse = try await searchBookUseCase.execute(<#SearchBookUseCase#>).searchBookAsync(bookrequest: bookRequest)
-//    return bookResponse
-//  }
-//  
-//  private func resetProperties() {
-//    input.query = PublishRelay<String>()
-//    
-//    searchPage.accept(1)
-//  }
-//  
-//}
-//
-//
-//
-//
-//
-//// Save
-//extension SearchBookViewModel {
-//  func saveBook(book: Book) {
-//    saveBookUseCase.executeSave(book: book)
-//    
-//    // 리스트에 적용
-//    
-//  }
-//  
-//  func deleteBook(book: Book) {
-//    
-//  }
-//}
+
+import Foundation
+import RxSwift
+import RxCocoa
+
+final class SearchBookViewModel {
+  
+  private let searchBookUseCase: SearchBookUseCase
+  private let saveBookUseCase: SaveBookUseCase
+  private let disposeBag = DisposeBag()
+  
+  var input = Input()
+  var output = Output()
+  
+  init(searchBookUseCase: SearchBookUseCase, saveBookUseCase: SaveBookUseCase) {
+    self.searchBookUseCase = searchBookUseCase
+    self.saveBookUseCase = saveBookUseCase
+    
+    initDataSource()
+    transform()
+  }
+  
+}
+
+// Transform
+extension SearchBookViewModel: InOutViewModel {
+  
+  struct Input {
+    let searchAPI = BehaviorRelay<BookAPI>(value: .naver)
+    let searchQuery = BehaviorRelay<String>(value: "")
+    let searchPage = BehaviorRelay<Int>(value: 1)
+    let searchSort = BehaviorRelay<SortOption>(value: .accuracy)
+    let searchButtonClicked = PublishRelay<Void>()
+    let loadMore = PublishRelay<Void>()
+  }
+  
+  struct Output {
+    let dataSource = BehaviorRelay<[SearchBookSectionModel2]>(value: [])
+    let isEndPage = BehaviorRelay<Bool>(value: false)
+    let optionChanged = PublishRelay<Void>()
+  }
+  
+  func transform() {
+    let bookRequest = Observable
+      .combineLatest(input.searchAPI,
+                     input.searchQuery,
+                     input.searchPage,
+                     input.searchSort)
+      .map { api, query, page, sort in
+        BookRequest(api: api, query: query, page: page, sort: sort)
+      }
+    
+    input.searchButtonClicked
+      .withLatestFrom(bookRequest)
+      .bind(with: self) { owner, bookRequest in
+        owner.resetSearch()
+        owner.searchBook(bookRequest: bookRequest)
+      }
+      .disposed(by: disposeBag)
+      
+    input.loadMore
+      .withLatestFrom(bookRequest)
+      .bind(with: self) { owner, bookRequest in
+        if !owner.output.isEndPage.value {
+          owner.input.searchPage.accept(owner.input.searchPage.value + 1)
+          owner.searchBook(bookRequest: bookRequest)
+        }
+      }
+      .disposed(by: disposeBag)
+    
+    Observable.combineLatest(input.searchAPI, input.searchSort)
+      .map { _ in }
+      .bind(to: output.optionChanged)
+      .disposed(by: disposeBag)
+    
+  }
+  
+}
+
+// Search
+extension SearchBookViewModel {
+  
+  private func searchBook(bookRequest: BookRequest) {
+    searchBookUseCase.executeSearch(bookRequest: bookRequest)
+      .asDriver(onErrorJustReturn: .failure(.badRequest))
+      .drive(with: self) { owner, result in
+        switch result {
+        case .success(let data):
+          owner.addItemsToBodySection(newBooks: data.books)
+          if data.isEnd {
+            owner.output.isEndPage.accept(true)
+          }
+        case .failure(let error):
+          print("Error fetching books:", error)
+        }
+      } onCompleted: { _ in
+        print("Book search onCompleted")
+      } onDisposed: { _ in
+        print("Book search onDisposed")
+      }
+      .disposed(by: disposeBag)
+  }
+  
+  private func resetSearch() {
+    input.searchPage.accept(1)
+    eraseItemsFromBodySection()
+  }
+  
+  private func initDataSource() {
+    let headerSection = SearchBookSectionModel2(
+      header: "Header Section",
+      items: [.headerItem(.naver), .headerItem(.kakao)]
+    )
+    
+    let bodySection = SearchBookSectionModel2(
+      header: "Body Section",
+      items: []
+    )
+    
+    output.dataSource.accept([headerSection, bodySection])
+  }
+  
+  private func addItemsToBodySection(newBooks: [Book]) {
+    var currentSections = output.dataSource.value
+    let newItems = newBooks.map { SearchBookSectionItem2.bodyItem($0) }
+    guard let bodyIndex = currentSections.firstIndex(where: { $0.header == "Body Section" }) else { return }
+    
+    let updatedItems = currentSections[bodyIndex].items + newItems
+    currentSections[bodyIndex] = SearchBookSectionModel2(header: "Body Section", items: updatedItems)
+    
+    output.dataSource.accept(currentSections)
+  }
+  
+  private func eraseItemsFromBodySection() {
+    var currentSections = output.dataSource.value
+    guard let bodyIndex = currentSections.firstIndex(where: { $0.header == "Body Section" }) else { return }
+    
+    currentSections[bodyIndex].items.removeAll()
+    output.dataSource.accept(currentSections)
+  }
+  
+}
+
+// Save
+extension SearchBookViewModel {
+  
+}

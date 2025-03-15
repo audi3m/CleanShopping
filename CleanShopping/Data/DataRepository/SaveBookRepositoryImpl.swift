@@ -15,20 +15,20 @@ final class SaveBookRepositoryImpl: SaveBookRepository {
     self.dataSource = dataSource
   }
   
-  func fetchBooks() -> [Book] {
-    return dataSource.fetchBooks().map { LocalBookMapper.toDomain($0) }
+  func fetchBooks() async -> [Book] {
+    return await dataSource.fetchBooks().map { LocalBookMapper.toDomain($0) }
   }
   
-  func saveBook(book: Book) {
+  func saveBook(book: Book) async {
     let newBook = LocalBookMapper.toDTO(book)
-    dataSource.saveBook(book: newBook)
+    await dataSource.saveBook(book: newBook)
   }
   
 //  func updateBook() { }
   
-  func deleteBook(book: Book) {
+  func deleteBook(book: Book) async {
     let id = book.id
-    dataSource.deleteBook(by: id)
+    await dataSource.deleteBook(by: id)
   }
   
 }

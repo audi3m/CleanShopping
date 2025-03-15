@@ -21,8 +21,8 @@ extension SettingsViewModel: InOutViewModel {
     
   }
   
-  func transform(input: Input) -> Output {
-    return Output()
+  func transform() {
+    
   }
   
 }

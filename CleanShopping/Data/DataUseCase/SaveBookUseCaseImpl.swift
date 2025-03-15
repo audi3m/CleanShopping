@@ -16,16 +16,16 @@ final class SaveBookUseCaseImpl: SaveBookUseCase {
     self.repository = repository
   }
   
-  func executeFetch() -> [Book] {
-    return repository.fetchBooks()
+  func executeFetch() async -> [Book] {
+    return await repository.fetchBooks()
   }
   
-  func executeSave(book: Book) {
-    repository.saveBook(book: book)
+  func executeSave(book: Book) async {
+    await repository.saveBook(book: book)
   }
   
-  func executeDelete(book: Book) {
-    repository.deleteBook(book: book)
+  func executeDelete(book: Book) async {
+    await repository.deleteBook(book: book)
   }
   
 }
