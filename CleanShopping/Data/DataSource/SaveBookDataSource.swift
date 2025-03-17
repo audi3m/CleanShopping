@@ -11,7 +11,7 @@ import SwiftData
 protocol SaveBookDataSource {
   func fetchBooks() async -> [LocalBookModel]
   func saveBook(book: LocalBookModel) async
-  func deleteBook(by id: UUID) async
+  func deleteBook(by isbn: String) async
 }
 
 @MainActor
@@ -49,17 +49,17 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
     print("Save new book: \(book.title)")
   }
   
-  func deleteBook(by id: UUID) {
-    if let book = getBook(by: id) {
+  func deleteBook(by isbn: String) {
+    if let book = getBook(by: isbn) {
       modelContext.delete(book)
       print("Delete book: \(book.title)")
     } else {
-      print("Fail to fetch book of id: \(id)")
+      print("Fail to fetch book of id: \(isbn)")
     }
   }
   
-  private func getBook(by id: UUID) -> LocalBookModel? {
-    let descriptor = FetchDescriptor<LocalBookModel>(predicate: #Predicate { $0.id == id })
+  private func getBook(by isbn: String) -> LocalBookModel? {
+    let descriptor = FetchDescriptor<LocalBookModel>(predicate: #Predicate { $0.isbn == isbn })
     return try? modelContext.fetch(descriptor).first
   }
 }

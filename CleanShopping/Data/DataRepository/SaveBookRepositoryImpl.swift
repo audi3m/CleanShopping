@@ -27,8 +27,8 @@ final class SaveBookRepositoryImpl: SaveBookRepository {
 //  func updateBook() { }
   
   func deleteBook(book: Book) async {
-    let id = book.id
-    await dataSource.deleteBook(by: id)
+    let isbn = book.isbn
+    await dataSource.deleteBook(by: isbn)
   }
   
 }

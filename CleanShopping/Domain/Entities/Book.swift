@@ -10,7 +10,7 @@ import Differentiator
 
 struct Book: Identifiable, Hashable, IdentifiableType, Equatable {
   
-  let id: String
+  let id = UUID()
   let title: String
   let link: String
   let image: String
@@ -30,7 +30,6 @@ struct Book: Identifiable, Hashable, IdentifiableType, Equatable {
        pubdate: String,
        isbn: String,
        description: String) {
-    self.id = isbn
     self.title = title
     self.link = link
     self.image = image
@@ -42,8 +41,8 @@ struct Book: Identifiable, Hashable, IdentifiableType, Equatable {
     self.description = description
   }
   
-  var identity: String {
-    return self.isbn
+  var identity: UUID {
+    return self.id
   }
   
 }
