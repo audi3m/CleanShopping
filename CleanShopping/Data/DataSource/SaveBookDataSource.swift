@@ -9,9 +9,9 @@ import Foundation
 import SwiftData
 
 protocol SaveBookDataSource {
-  func fetchBooks() async -> [LocalBookModel]
-  func saveBook(book: LocalBookModel) async
-  func deleteBook(by isbn: String) async
+  func fetchBooks() async throws -> [LocalBookModel]
+  func saveBook(book: LocalBookModel) async throws
+  func deleteBook(by isbn: String) async throws
 }
 
 @MainActor
@@ -34,7 +34,7 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
     }
   }
   
-  func fetchBooks() -> [LocalBookModel] {
+  func fetchBooks() async throws -> [LocalBookModel] {
     do {
       let list = try modelContext.fetch(FetchDescriptor<LocalBookModel>())
       print("Fetch like books")
@@ -46,20 +46,24 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
   
   func saveBook(book: LocalBookModel) {
     modelContext.insert(book)
-    print("Save new book: \(book.title)")
+    print("Save book: \(book.title)")
   }
   
   func deleteBook(by isbn: String) {
-    if let book = getBook(by: isbn) {
-      modelContext.delete(book)
-      print("Delete book: \(book.title)")
+    let books = getBooks(by: isbn)
+    if books.isEmpty {
+      print("Fail to fetch books with isbn: \(isbn)")
     } else {
-      print("Fail to fetch book of id: \(isbn)")
+      for book in books {
+        modelContext.delete(book)
+        print("Deleted book: \(book.title)")
+      }
     }
   }
   
-  private func getBook(by isbn: String) -> LocalBookModel? {
+  private func getBooks(by isbn: String) -> [LocalBookModel] {
     let descriptor = FetchDescriptor<LocalBookModel>(predicate: #Predicate { $0.isbn == isbn })
-    return try? modelContext.fetch(descriptor).first
+    let books = (try? modelContext.fetch(descriptor)) ?? []
+    return books
   }
 }

@@ -21,17 +21,6 @@ final class SearchBookRepositoryImpl: SearchBookRepository {
     self.dataSource = dataSource
   }
   
-//  func searchBook(bookRequest: BookRequest, handler: @escaping (Result<BookResponse, Error>) -> Void) {
-//    dataSource.searchBook(bookRequest: bookRequest) { result in
-//      switch result {
-//      case .success(let response):
-//        handler(.success(response.toDomain()))
-//      case .failure(let error):
-//        print(error.localizedDescription)
-//      }
-//    }
-//  }
-  
   func searchBookSingle(bookRequest: BookRequest) -> Single<Result<BookResponse, BookRequestError>> {
     return dataSource.searchBookSingle(bookRequest: bookRequest)
       .flatMap { result -> Single<Result<BookResponse, BookRequestError>> in
