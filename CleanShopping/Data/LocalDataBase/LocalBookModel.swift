@@ -10,7 +10,6 @@ import SwiftData
 
 @Model
 final class LocalBookModel {
-  var id = UUID()
   var title: String
   var link: String
   var image: String

@@ -20,8 +20,12 @@ final class SaveBookUseCaseImpl: SaveBookUseCase {
     return await repository.fetchBooks()
   }
   
-  func executeSave(book: Book) async {
-    await repository.saveBook(book: book)
+  func executeSave(book: Book) async throws {
+    do {
+      try await repository.saveBook(book: book)
+    } catch {
+      print(error)
+    }
   }
   
   func executeDelete(book: Book) async {

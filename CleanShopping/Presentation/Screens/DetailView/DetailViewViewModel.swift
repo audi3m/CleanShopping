@@ -26,3 +26,7 @@ extension DetailViewViewModel: InOutViewModel {
   }
   
 }
+
+extension DetailViewController {
+  func 
+}

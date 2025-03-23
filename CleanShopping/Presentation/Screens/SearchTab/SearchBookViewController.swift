@@ -169,7 +169,7 @@ extension SearchBookViewController {
   
 }
 
-// Test
+// Navigation
 extension SearchBookViewController {
   
   private func setupNavigationBarMenu() {

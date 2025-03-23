@@ -6,6 +6,7 @@
 //
 
 import Foundation
+//import Swinject
 
 @MainActor
 final class DIContainer {
@@ -34,3 +35,35 @@ final class DIContainer {
     self.saveBookUseCase = SaveBookUseCaseImpl(repository: saveBookRepository)
   }
 }
+
+//final class DIContainer2 {
+//  
+//  static let shared = DIContainer2()
+//  
+//  private init() {}
+//  
+//  private var services: [String: Any] = [:]
+//  
+//  func register<T>(type: T.Type, component: AnyObject) {
+//    let key = "\(type)"
+//    services[key] = component
+//  }
+//  
+//  func resolve<T>(type: T.Type) -> T {
+//    let key = "\(type)"
+//    return services[key] as! T
+//  }
+//  
+//  func resolve<T>() -> T {
+//    let key = "\(T.self)"
+//    return services[key] as! T
+//  }
+//}
+//
+//@propertyWrapper
+//class DependencyPropertyWrapper<T> {
+//    var wrappedValue: T
+//    init() {
+//        self.wrappedValue = DIContainer2.shared.resolve()
+//    }
+//}

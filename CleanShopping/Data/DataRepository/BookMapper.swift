@@ -22,8 +22,7 @@ struct LocalBookMapper {
   }
   
   static func toDomain(_ localBook: LocalBookModel) -> Book {
-    return Book(id: localBook.id,
-                title: localBook.title,
+    return Book(title: localBook.title,
                 link: localBook.link,
                 image: localBook.image,
                 author: localBook.author,
