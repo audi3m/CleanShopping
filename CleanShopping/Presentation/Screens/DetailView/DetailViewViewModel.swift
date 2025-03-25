@@ -28,5 +28,11 @@ extension DetailViewViewModel: InOutViewModel {
 }
 
 extension DetailViewController {
-  func 
+  func saveBook() {
+    
+  }
+  
+  func deleteBook() {
+    
+  }
 }

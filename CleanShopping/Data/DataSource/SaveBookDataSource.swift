@@ -20,8 +20,6 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
   private let modelContainer: ModelContainer
   private let modelContext: ModelContext
   
-  static let shared = SaveBookDataSourceImpl()
-  
   init() {
     do {
       self.modelContainer = try ModelContainer(
@@ -44,13 +42,13 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
     }
   }
   
-  func saveBook(book: LocalBookModel) {
+  func saveBook(book: LocalBookModel) async throws {
     modelContext.insert(book)
     print("Save book: \(book.title)")
   }
   
-  func deleteBook(by isbn: String) {
-    let books = getBooks(by: isbn)
+  func deleteBook(by isbn: String) async throws {
+    let books = await getBooks(by: isbn)
     if books.isEmpty {
       print("Fail to fetch books with isbn: \(isbn)")
     } else {
@@ -61,7 +59,7 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
     }
   }
   
-  private func getBooks(by isbn: String) -> [LocalBookModel] {
+  private func getBooks(by isbn: String) async -> [LocalBookModel] {
     let descriptor = FetchDescriptor<LocalBookModel>(predicate: #Predicate { $0.isbn == isbn })
     let books = (try? modelContext.fetch(descriptor)) ?? []
     return books
