@@ -38,7 +38,7 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
       print("Fetch like books")
       return list
     } catch {
-      fatalError("Error fetching data\n\(error.localizedDescription)")
+      throw LocalDataBaseError.dataSource(.fetch(original: error))
     }
   }
   
@@ -48,9 +48,19 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
   }
   
   func deleteBook(by isbn: String) async throws {
+    do {
+      let books = try await getBooks(by: isbn)
+      if books.isEmpty {
+        
+      }
+    } catch {
+      
+    }
+    
+    
     let books = await getBooks(by: isbn)
     if books.isEmpty {
-      print("Fail to fetch books with isbn: \(isbn)")
+      throw LocalDataBaseError.dataSource(.delete(original: error))
     } else {
       for book in books {
         modelContext.delete(book)
@@ -59,9 +69,13 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
     }
   }
   
-  private func getBooks(by isbn: String) async -> [LocalBookModel] {
-    let descriptor = FetchDescriptor<LocalBookModel>(predicate: #Predicate { $0.isbn == isbn })
-    let books = (try? modelContext.fetch(descriptor)) ?? []
-    return books
+  private func getBooks(by isbn: String) async throws -> [LocalBookModel] {
+    do {
+      let descriptor = FetchDescriptor<LocalBookModel>(predicate: #Predicate { $0.isbn == isbn })
+      let books = try modelContext.fetch(descriptor)
+      return books
+    } catch {
+      throw LocalDataBaseError.dataSource(.fetch(original: error))
+    }
   }
 }
