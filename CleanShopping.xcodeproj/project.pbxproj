@@ -56,6 +56,7 @@
 		D4491E4D2D90C3190092F02C /* HomeTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4491E1C2D90C3190092F02C /* HomeTabBarController.swift */; };
 		D4491E562D9278B70092F02C /* BookCoverCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4491E552D9278B70092F02C /* BookCoverCollectionViewCell.swift */; };
 		D4491E582D92CF4B0092F02C /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4491E572D92CF4B0092F02C /* PaddedLabel.swift */; };
+		D4491E722D952E980092F02C /* LocalBookError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4491E712D952E980092F02C /* LocalBookError.swift */; };
 		D45322712D2808690050CA17 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D45322702D2808690050CA17 /* .gitignore */; };
 		D45322F42D354AD80050CA17 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D45322F32D354AD80050CA17 /* SnapKit */; };
 		D45322F72D354AE70050CA17 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D45322F62D354AE70050CA17 /* Kingfisher */; };
@@ -130,6 +131,7 @@
 		D4491E1F2D90C3190092F02C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D4491E552D9278B70092F02C /* BookCoverCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCoverCollectionViewCell.swift; sourceTree = "<group>"; };
 		D4491E572D92CF4B0092F02C /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
+		D4491E712D952E980092F02C /* LocalBookError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBookError.swift; sourceTree = "<group>"; };
 		D45322082D272F760050CA17 /* CleanShopping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CleanShopping.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D453221E2D272F770050CA17 /* CleanShoppingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleanShoppingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D45322282D272F780050CA17 /* CleanShoppingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleanShoppingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -425,8 +427,25 @@
 				D4491E082D90C3190092F02C /* Domain */,
 				D4491E1E2D90C3190092F02C /* Presentation */,
 				D4491E1F2D90C3190092F02C /* Info.plist */,
+				D4491E6F2D952E620092F02C /* Common */,
 			);
 			path = CleanShopping;
+			sourceTree = "<group>";
+		};
+		D4491E6F2D952E620092F02C /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				D4491E702D952E6E0092F02C /* Errors */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		D4491E702D952E6E0092F02C /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				D4491E712D952E980092F02C /* LocalBookError.swift */,
+			);
+			path = Errors;
 			sourceTree = "<group>";
 		};
 		D45321FF2D272F760050CA17 = {
@@ -637,6 +656,7 @@
 				D4491E3A2D90C3190092F02C /* SearchBookRepository.swift in Sources */,
 				D4491E3B2D90C3190092F02C /* SaveBookUseCase.swift in Sources */,
 				D4491E3C2D90C3190092F02C /* SearchBookUseCase.swift in Sources */,
+				D4491E722D952E980092F02C /* LocalBookError.swift in Sources */,
 				D4491E3D2D90C3190092F02C /* Book.swift in Sources */,
 				D4491E3E2D90C3190092F02C /* BookRequest.swift in Sources */,
 				D4491E3F2D90C3190092F02C /* BookResponse.swift in Sources */,

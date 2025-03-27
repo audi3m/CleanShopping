@@ -5,7 +5,7 @@
 //  Created by J Oh on 3/5/25.
 //
 
-import Foundation
+import Foundation 
 
 final class SaveBookRepositoryImpl: SaveBookRepository {
   
@@ -16,18 +16,31 @@ final class SaveBookRepositoryImpl: SaveBookRepository {
   }
   
   func fetchBooks() async throws -> [Book] {
-    return try await dataSource.fetchBooks().map { LocalBookMapper.toDomain($0) }
+    do {
+      let list = try await dataSource.fetchBooks().map { LocalBookMapper.toDomain($0) }
+      return list
+    } catch {
+      throw LocalDataBaseError.repository(.fetch(original: error))
+    }
   }
   
   func saveBook(book: Book) async throws {
-    let newBook = LocalBookMapper.toDTO(book)
-    try await dataSource.saveBook(book: newBook)
+    do {
+      let newBook = LocalBookMapper.toDTO(book)
+      try await dataSource.saveBook(book: newBook)
+    } catch {
+      throw LocalDataBaseError.repository(.save(original: error))
+    }
   }
   
   //  func updateBook() { }
   
   func deleteBook(book: Book) async throws {
-    try await dataSource.deleteBook(by: book.isbn)
+    do {
+      try await dataSource.deleteBook(by: book.isbn)
+    } catch {
+      throw LocalDataBaseError.repository(.delete(original: error))
+    }
   }
   
 }

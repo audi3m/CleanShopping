@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftData
+import SwiftData 
 
 final class SaveBookUseCaseImpl: SaveBookUseCase {
   
@@ -17,15 +17,28 @@ final class SaveBookUseCaseImpl: SaveBookUseCase {
   }
   
   func executeFetch() async throws -> [Book] {
-    return try await repository.fetchBooks()
+    do {
+      let list = try await repository.fetchBooks()
+      return list
+    } catch {
+      throw LocalDataBaseError.useCase(.fetch(original: error))
+    }
   }
   
   func executeSave(book: Book) async throws {
-    try await repository.saveBook(book: book)
+    do {
+      try await repository.saveBook(book: book)
+    } catch {
+      throw LocalDataBaseError.useCase(.save(original: error))
+    }
   }
   
   func executeDelete(book: Book) async throws {
-    try await repository.deleteBook(book: book)
+    do {
+      try await repository.deleteBook(book: book)
+    } catch {
+      throw LocalDataBaseError.useCase(.delete(original: error))
+    }
   }
   
 }
