@@ -50,22 +50,12 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
   func deleteBook(by isbn: String) async throws {
     do {
       let books = try await getBooks(by: isbn)
-      if books.isEmpty {
-        
-      }
-    } catch {
-      
-    }
-    
-    
-    let books = await getBooks(by: isbn)
-    if books.isEmpty {
-      throw LocalDataBaseError.dataSource(.delete(original: error))
-    } else {
       for book in books {
         modelContext.delete(book)
         print("Deleted book: \(book.title)")
       }
+    } catch {
+      throw LocalDataBaseError.dataSource(.delete(original: error))
     }
   }
   

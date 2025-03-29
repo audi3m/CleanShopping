@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum NetworkBaseError: Error {
+  
+}
+
 enum LocalDataBaseError: Error {
   case dataSource(OperationError)
   case repository(OperationError)
