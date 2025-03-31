@@ -45,15 +45,23 @@ extension BookCoverCollectionViewCell {
   
   private func configureUI() {
     imageView.snp.makeConstraints { make in
-      
+      make.top.horizontalEdges.equalToSuperview()
+      make.height.equalTo(80)
     }
     titleLabel.snp.makeConstraints { make in
-      
+      make.top.equalTo(imageView.snp.bottom)
+      make.horizontalEdges.bottom.equalToSuperview()
     }
   }
   
   func configureData(book: Book) {
     let coverUrl = URL(string: book.image)
     imageView.kf.setImage(with: coverUrl)
+  }
+  
+  func configureSample() {
+    let coverUrl = URL(string: Book.sample.image)
+    imageView.kf.setImage(with: coverUrl)
+    titleLabel.text = Book.sample.title
   }
 }
