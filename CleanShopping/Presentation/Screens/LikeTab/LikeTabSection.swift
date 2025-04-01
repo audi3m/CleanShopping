@@ -8,16 +8,11 @@
 import Foundation
 import RxDataSources
 
-enum LikeBookSectionItem: Hashable {
-  case body(Book)
-}
-
-enum LikeBookSection: Int, CaseIterable {
+enum LikeBookSection: CaseIterable {
   case body
 }
 
-// RxDataSource
-enum LikeBookSectionItem2: IdentifiableType, Equatable {
+enum LikeBookSectionItem: IdentifiableType, Equatable {
   case bodyItem(Book)
   
   var identity: String {
@@ -28,13 +23,13 @@ enum LikeBookSectionItem2: IdentifiableType, Equatable {
   }
 }
 
-struct LikeBookSectionModel2 {
+struct LikeBookSectionModel {
   var header: String
-  var items: [LikeBookSectionItem2]
+  var items: [LikeBookSectionItem]
 }
 
-extension LikeBookSectionModel2: AnimatableSectionModelType {
-  init(original: LikeBookSectionModel2, items: [LikeBookSectionItem2]) {
+extension LikeBookSectionModel: AnimatableSectionModelType {
+  init(original: LikeBookSectionModel, items: [LikeBookSectionItem]) {
     self = original
     self.items = items
   }
@@ -43,4 +38,3 @@ extension LikeBookSectionModel2: AnimatableSectionModelType {
     return header
   }
 }
-

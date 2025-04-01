@@ -8,22 +8,14 @@
 import Foundation
 import RxDataSources
 
-enum SearchBookSectionItem: Hashable {
-  case filterOption(BookAPI)
-  case listData(Book)
+enum SearchBookSection: CaseIterable {
+  case header
+  case body
 }
 
-enum SearchBookSection: Int, CaseIterable {
-  case filter
-  case list
-}
-
-// Model 2
-// RxDataSource
-enum SearchBookSectionItem2: IdentifiableType, Equatable {
+enum SearchBookSectionItem: IdentifiableType, Equatable {
   case headerItem(BookAPI)
   case bodyItem(Book)
-  //  case thirdSection(Model)
   
   var identity: String {
     switch self {
@@ -35,13 +27,13 @@ enum SearchBookSectionItem2: IdentifiableType, Equatable {
   }
 }
 
-struct SearchBookSectionModel2 {
+struct SearchBookSectionModel {
   var header: String
-  var items: [SearchBookSectionItem2]
+  var items: [SearchBookSectionItem]
 }
 
-extension SearchBookSectionModel2: AnimatableSectionModelType {
-  init(original: SearchBookSectionModel2, items: [SearchBookSectionItem2]) {
+extension SearchBookSectionModel: AnimatableSectionModelType {
+  init(original: SearchBookSectionModel, items: [SearchBookSectionItem]) {
     self = original
     self.items = items
   }
