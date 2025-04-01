@@ -77,10 +77,10 @@ final class DetailViewController: BaseViewController {
   }()
   
   private let disposeBag = DisposeBag()
-  private let viewModel: SearchBookViewModel
+  private let viewModel: DetailViewViewModel
   private var isFavorite = false
   
-  init(viewModel: SearchBookViewModel) {
+  init(viewModel: DetailViewViewModel) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
