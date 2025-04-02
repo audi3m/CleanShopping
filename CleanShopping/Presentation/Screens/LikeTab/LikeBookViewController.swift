@@ -17,7 +17,6 @@ final class LikeBookViewController: BaseViewController {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
     collectionView.register(BookCoverCollectionViewCell.self, forCellWithReuseIdentifier: BookCoverCollectionViewCell.id)
     collectionView.keyboardDismissMode = .onDrag
-    collectionView.backgroundColor = .white
     return collectionView
   }()
   
@@ -70,8 +69,8 @@ extension LikeBookViewController {
 
 // RxDataSource
 extension LikeBookViewController {
-  private func makeRxDataSource() -> RxCollectionViewSectionedAnimatedDataSource<LikeBookSectionModel2> {
-    return RxCollectionViewSectionedAnimatedDataSource<LikeBookSectionModel2> { dataSource, collectionView, indexPath, sectionType in
+  private func makeRxDataSource() -> RxCollectionViewSectionedAnimatedDataSource<LikeBookSectionModel> {
+    return RxCollectionViewSectionedAnimatedDataSource<LikeBookSectionModel> { dataSource, collectionView, indexPath, sectionType in
       switch sectionType {
       case .bodyItem(let book):
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookCoverCollectionViewCell.id, for: indexPath) as? BookCoverCollectionViewCell else {
@@ -98,20 +97,19 @@ extension LikeBookViewController {
   }
   
   private func bodySectionLayout() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    let itemInset: CGFloat = 2.5
     
-    let groupSize = NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1/3),
-      heightDimension: .absolute(100)
-    )
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/3),heightDimension: .fractionalHeight(1))
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    item.contentInsets = NSDirectionalEdgeInsets(top: itemInset, leading: itemInset, bottom: itemInset, trailing: itemInset)
+    
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(0.58))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
     
     let section = NSCollectionLayoutSection(group: group)
-    section.orthogonalScrollingBehavior = .none
-    section.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
-    section.interGroupSpacing = 10
+    section.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
     
     return section
   }
+  
 }
