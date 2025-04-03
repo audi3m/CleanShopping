@@ -15,8 +15,6 @@ final class BookCoverCollectionViewCell: UICollectionViewCell {
   private let imageView: UIImageView = {
     let view = UIImageView()
     view.contentMode = .scaleAspectFit
-    view.layer.masksToBounds = true
-    view.layer.cornerRadius = 8
     return view
   }()
   private let titleLabel: UILabel = {
@@ -35,6 +33,7 @@ final class BookCoverCollectionViewCell: UICollectionViewCell {
     super.init(frame: frame)
     configureHierarchy()
     configureLayout()
+    configureUI()
   }
   
   required init?(coder: NSCoder) {
@@ -56,17 +55,19 @@ extension BookCoverCollectionViewCell {
       make.height.equalTo(imageView.snp.width).multipliedBy(1.45)
     }
     titleLabel.snp.makeConstraints { make in
-      make.top.equalTo(imageView.snp.bottom).offset(2.5)
-      make.horizontalEdges.equalToSuperview()
+      make.top.equalTo(imageView.snp.bottom).offset(5)
+      make.horizontalEdges.equalToSuperview().inset(7)
     }
     authorLabel.snp.makeConstraints { make in
       make.top.equalTo(titleLabel.snp.bottom).offset(2.5)
-      make.horizontalEdges.equalToSuperview()
+      make.horizontalEdges.equalToSuperview().inset(7)
     }
   }
   
   private func configureUI() {
-    contentView.backgroundColor = .red
+    contentView.backgroundColor = .systemGray6
+    contentView.layer.cornerRadius = 8
+    contentView.layer.masksToBounds = true
   }
   
   func configureData(book: Book) {
@@ -76,9 +77,4 @@ extension BookCoverCollectionViewCell {
     authorLabel.text = book.author
   }
   
-  func configureSample() {
-    let coverUrl = URL(string: Book.sample.image)
-    imageView.kf.setImage(with: coverUrl)
-    titleLabel.text = Book.sample.title
-  }
 }
