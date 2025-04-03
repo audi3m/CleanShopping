@@ -41,7 +41,7 @@ extension SearchBookViewModel: InOutViewModel {
   }
   
   struct Output {
-    let dataSource = BehaviorRelay<[SearchBookSectionModel2]>(value: [])
+    let dataSource = BehaviorRelay<[SearchBookSectionModel]>(value: [])
     let isEndPage = BehaviorRelay<Bool>(value: false)
     let optionChanged = PublishRelay<Void>()
   }
@@ -113,12 +113,12 @@ extension SearchBookViewModel {
   }
   
   private func initDataSource() {
-    let headerSection = SearchBookSectionModel2(
+    let headerSection = SearchBookSectionModel(
       header: "Header Section",
       items: [.headerItem(.naver), .headerItem(.kakao)]
     )
     
-    let bodySection = SearchBookSectionModel2(
+    let bodySection = SearchBookSectionModel(
       header: "Body Section",
       items: []
     )
@@ -128,11 +128,11 @@ extension SearchBookViewModel {
   
   private func addItemsToBodySection(newBooks: [Book]) {
     var currentSections = output.dataSource.value
-    let newItems = newBooks.map { SearchBookSectionItem2.bodyItem($0) }
+    let newItems = newBooks.map { SearchBookSectionItem.bodyItem($0) }
     guard let bodyIndex = currentSections.firstIndex(where: { $0.header == "Body Section" }) else { return }
     
     let updatedItems = currentSections[bodyIndex].items + newItems
-    currentSections[bodyIndex] = SearchBookSectionModel2(header: "Body Section", items: updatedItems)
+    currentSections[bodyIndex] = SearchBookSectionModel(header: "Body Section", items: updatedItems)
     
     output.dataSource.accept(currentSections)
   }

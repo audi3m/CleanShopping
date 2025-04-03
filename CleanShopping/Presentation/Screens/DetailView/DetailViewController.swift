@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import Kingfisher
+import RxSwift
+import RxCocoa
 
 final class DetailViewController: BaseViewController {
   
@@ -74,9 +76,18 @@ final class DetailViewController: BaseViewController {
     return view
   }()
   
-  private let viewModel = DetailViewViewModel()
+  private let disposeBag = DisposeBag()
+  private let viewModel: DetailViewViewModel
+  private var isFavorite = false
   
-  private var isFavorite: Bool = false
+  init(viewModel: DetailViewViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()

@@ -57,6 +57,7 @@
 		D4491E562D9278B70092F02C /* BookCoverCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4491E552D9278B70092F02C /* BookCoverCollectionViewCell.swift */; };
 		D4491E582D92CF4B0092F02C /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4491E572D92CF4B0092F02C /* PaddedLabel.swift */; };
 		D4491E722D952E980092F02C /* LocalBookError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4491E712D952E980092F02C /* LocalBookError.swift */; };
+		D4491E7F2D9826590092F02C /* LikeTabSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4491E7E2D9826590092F02C /* LikeTabSection.swift */; };
 		D45322712D2808690050CA17 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D45322702D2808690050CA17 /* .gitignore */; };
 		D45322F42D354AD80050CA17 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D45322F32D354AD80050CA17 /* SnapKit */; };
 		D45322F72D354AE70050CA17 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D45322F62D354AE70050CA17 /* Kingfisher */; };
@@ -132,6 +133,7 @@
 		D4491E552D9278B70092F02C /* BookCoverCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCoverCollectionViewCell.swift; sourceTree = "<group>"; };
 		D4491E572D92CF4B0092F02C /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
 		D4491E712D952E980092F02C /* LocalBookError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBookError.swift; sourceTree = "<group>"; };
+		D4491E7E2D9826590092F02C /* LikeTabSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeTabSection.swift; sourceTree = "<group>"; };
 		D45322082D272F760050CA17 /* CleanShopping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CleanShopping.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D453221E2D272F770050CA17 /* CleanShoppingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleanShoppingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D45322282D272F780050CA17 /* CleanShoppingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleanShoppingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -344,11 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				D4491E092D90C3190092F02C /* BaseViewController.swift */,
-				D4491E0A2D90C3190092F02C /* BookApiSelectionCollectionViewCell.swift */,
-				D4491E0B2D90C3190092F02C /* BookCollectionViewCell.swift */,
-				D4491E552D9278B70092F02C /* BookCoverCollectionViewCell.swift */,
 				D4491E0C2D90C3190092F02C /* InOutViewModel.swift */,
-				D4491E0D2D90C3190092F02C /* SearchTabSection.swift */,
 				D4491E572D92CF4B0092F02C /* PaddedLabel.swift */,
 			);
 			path = Components;
@@ -368,6 +366,8 @@
 			children = (
 				D4491E122D90C3190092F02C /* LikeBookViewController.swift */,
 				D4491E132D90C3190092F02C /* LikeBookViewModel.swift */,
+				D4491E7E2D9826590092F02C /* LikeTabSection.swift */,
+				D4491E552D9278B70092F02C /* BookCoverCollectionViewCell.swift */,
 			);
 			path = LikeTab;
 			sourceTree = "<group>";
@@ -377,6 +377,9 @@
 			children = (
 				D4491E152D90C3190092F02C /* SearchBookViewController.swift */,
 				D4491E162D90C3190092F02C /* SearchBookViewModel.swift */,
+				D4491E0D2D90C3190092F02C /* SearchTabSection.swift */,
+				D4491E0A2D90C3190092F02C /* BookApiSelectionCollectionViewCell.swift */,
+				D4491E0B2D90C3190092F02C /* BookCollectionViewCell.swift */,
 			);
 			path = SearchTab;
 			sourceTree = "<group>";
@@ -662,6 +665,7 @@
 				D4491E3F2D90C3190092F02C /* BookResponse.swift in Sources */,
 				D4491E402D90C3190092F02C /* BaseViewController.swift in Sources */,
 				D4491E412D90C3190092F02C /* BookApiSelectionCollectionViewCell.swift in Sources */,
+				D4491E7F2D9826590092F02C /* LikeTabSection.swift in Sources */,
 				D4491E422D90C3190092F02C /* BookCollectionViewCell.swift in Sources */,
 				D4491E432D90C3190092F02C /* InOutViewModel.swift in Sources */,
 				D4491E442D90C3190092F02C /* SearchTabSection.swift in Sources */,

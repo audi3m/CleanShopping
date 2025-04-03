@@ -12,6 +12,7 @@ final class DetailViewViewModel {
   
   init(saveUseCase: SaveBookUseCase) {
     self.saveUseCase = saveUseCase
+    transform()
   }
   
 }

@@ -109,8 +109,8 @@ extension SearchBookViewController {
 
 // RxDataSource
 extension SearchBookViewController {
-  private func makeRxDataSource() -> RxCollectionViewSectionedAnimatedDataSource<SearchBookSectionModel2> {
-    return RxCollectionViewSectionedAnimatedDataSource<SearchBookSectionModel2> { dataSource, collectionView, indexPath, sectionType in
+  private func makeRxDataSource() -> RxCollectionViewSectionedAnimatedDataSource<SearchBookSectionModel> {
+    return RxCollectionViewSectionedAnimatedDataSource<SearchBookSectionModel> { dataSource, collectionView, indexPath, sectionType in
       switch sectionType {
       case .headerItem(let api):
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookApiSelectionCollectionViewCell.id, for: indexPath) as? BookApiSelectionCollectionViewCell else {
@@ -137,15 +137,15 @@ extension SearchBookViewController {
       guard let self else { return nil }
       let section = SearchBookSection.allCases[sectionIndex]
       switch section {
-      case .filter:
-        return self.createFilterSectionLayout()
-      case .list:
-        return self.createListSectionLayout(layoutEnvironment: layoutEnvironment)
+      case .header:
+        return self.createHeaderSectionLayout()
+      case .body:
+        return self.createBodySectionLayout(layoutEnvironment: layoutEnvironment)
       }
     }
   }
   
-  private func createFilterSectionLayout() -> NSCollectionLayoutSection {
+  private func createHeaderSectionLayout() -> NSCollectionLayoutSection {
     let size = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .fractionalHeight(1.0))
     let item = NSCollectionLayoutItem(layoutSize: size)
     
@@ -160,7 +160,7 @@ extension SearchBookViewController {
     return section
   }
   
-  private func createListSectionLayout(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+  private func createBodySectionLayout(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
     let config = UICollectionLayoutListConfiguration(appearance: .plain)
     let section = NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
     section.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)

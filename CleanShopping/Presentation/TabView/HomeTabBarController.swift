@@ -74,9 +74,11 @@ extension HomeTabBarController {
           rootViewController: SearchBookViewController(viewModel: viewModel)
         )
       case .likes:
-        return UINavigationController(rootViewController: LikeBookViewController())
+        let viewModel = LikeBookViewModel(saveBookUseCase: container.saveBookUseCase)
+        return UINavigationController(rootViewController: LikeBookViewController(viewModel: viewModel))
       case .settings:
-        return UINavigationController(rootViewController: DetailViewController())
+        let viewModel = DetailViewViewModel(saveUseCase: container.saveBookUseCase)
+        return UINavigationController(rootViewController: DetailViewController(viewModel: viewModel))
       }
     }
     
