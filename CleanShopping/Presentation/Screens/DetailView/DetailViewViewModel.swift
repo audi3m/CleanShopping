@@ -6,12 +6,19 @@
 //
 
 import Foundation
+import RxSwift
 
 final class DetailViewViewModel {
   private let saveUseCase: SaveBookUseCase
+  private let book: Book
+  private let disposeBag = DisposeBag()
   
-  init(saveUseCase: SaveBookUseCase) {
+  var input = Input()
+  var output = Output()
+  
+  init(saveUseCase: SaveBookUseCase, book: Book) {
     self.saveUseCase = saveUseCase
+    self.book = book
     transform()
   }
   
@@ -20,17 +27,38 @@ final class DetailViewViewModel {
 extension DetailViewViewModel: InOutViewModel {
   
   struct Input {
-    
+    let didLoadInput = PublishSubject<Void>()
+    let saveButtonInput: PublishSubject<Void> = .init()
   }
   
   struct Output {
-    
+    let didLoadDetailViewOutput = PublishSubject<Book>()
   }
   
   func transform() {
-    
+    input.didLoadInput
+      .bind(with: self) { viewModel, _ in
+        viewModel.output.didLoadDetailViewOutput.onNext(viewModel.book)
+      }
+      .disposed(by: disposeBag)
   }
   
+}
+
+extension DetailViewViewModel {
+  enum Action {
+    case viewDidLoad
+//    case likeTapped(_ book: Book)
+  }
+  
+  func action(_ action: Action) {
+    switch action {
+    case .viewDidLoad:
+      input.didLoadInput.
+//    case .likeTapped(let book):
+//      input.tappedBook.accept(book)
+    }
+  }
 }
 
 extension DetailViewViewModel {

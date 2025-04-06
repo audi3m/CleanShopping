@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class LikeBookViewModel {
-  private let saveBookUseCase: SaveBookUseCase
+  let saveBookUseCase: SaveBookUseCase
   private let disposeBag = DisposeBag()
   
   var input = Input()
@@ -30,17 +30,39 @@ final class LikeBookViewModel {
 extension LikeBookViewModel: InOutViewModel {
   
   struct Input {
-    var tappedBook = PublishRelay<Book>()
+    let viewDidLoad = PublishRelay<Void>()
+    let tappedBook = PublishRelay<Book>()
   }
   
   struct Output {
     let dataSource = BehaviorRelay<[LikeBookSectionModel]>(value: [])
+    let tappedBook = PublishRelay<Book>()
   }
   
   func transform() {
-    
+    input.tappedBook
+      .bind(with: self) { owner, book in
+        owner.output.tappedBook.accept(book)
+      }
+      .disposed(by: disposeBag)
   }
   
+}
+
+extension LikeBookViewModel {
+  enum Action {
+    case viewDidLoad
+    case bookTapped(_ book: Book)
+  }
+  
+  func action(_ action: Action) {
+    switch action {
+    case .viewDidLoad:
+      input.viewDidLoad.accept(())
+    case .bookTapped(let book):
+      input.tappedBook.accept(book)
+    }
+  }
 }
 
 // Rx

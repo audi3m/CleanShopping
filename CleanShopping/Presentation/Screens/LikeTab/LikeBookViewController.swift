@@ -57,12 +57,27 @@ final class LikeBookViewController: BaseViewController {
 extension LikeBookViewController {
   private func rxBind() {
     
-    
+    collectionView.rx
+      .modelSelected(Book.self)
+      .bind(with: self) { owner, book in
+        owner.viewModel.action(.bookTapped(book))
+        if let indexPath = owner.collectionView.indexPathsForSelectedItems?.first {
+          self.collectionView.deselectItem(at: indexPath, animated: true)
+        }
+      }
+      .disposed(by: disposeBag)
     
     let dataSource = makeRxDataSource()
     
     viewModel.output.dataSource
       .bind(to: collectionView.rx.items(dataSource: dataSource))
+      .disposed(by: disposeBag)
+    
+    viewModel.output.tappedBook
+      .bind(with: self) { owner, book in
+        let detailView = DetailViewController(viewModel: .init(saveUseCase: owner.viewModel.saveBookUseCase, book: book))
+        owner.present(detailView, animated: true)
+      }
       .disposed(by: disposeBag)
   }
 }
@@ -101,9 +116,9 @@ extension LikeBookViewController {
     
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/3),heightDimension: .fractionalHeight(1))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = NSDirectionalEdgeInsets(top: itemInset, leading: itemInset, bottom: itemInset, trailing: itemInset)
+    item.contentInsets = NSDirectionalEdgeInsets(top: itemInset*2, leading: itemInset, bottom: itemInset*2, trailing: itemInset)
     
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(0.59))
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(0.6))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
     
     let section = NSCollectionLayoutSection(group: group)
