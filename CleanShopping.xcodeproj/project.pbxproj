@@ -222,6 +222,7 @@
 			isa = PBXGroup;
 			children = (
 				D4491DE82D90C3190092F02C /* SaveBookUseCaseImpl.swift */,
+				D4491E082D90C3190092F02C /* Domain */,
 				D4491DE92D90C3190092F02C /* SearchBookUseCaseImpl.swift */,
 			);
 			path = DataUseCase;
@@ -427,7 +428,6 @@
 			children = (
 				D4491DE02D90C3190092F02C /* App */,
 				D4491DFD2D90C3190092F02C /* Data */,
-				D4491E082D90C3190092F02C /* Domain */,
 				D4491E1E2D90C3190092F02C /* Presentation */,
 				D4491E1F2D90C3190092F02C /* Info.plist */,
 				D4491E6F2D952E620092F02C /* Common */,

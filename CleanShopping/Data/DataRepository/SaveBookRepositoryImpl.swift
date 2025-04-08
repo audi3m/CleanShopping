@@ -24,20 +24,16 @@ final class SaveBookRepositoryImpl: SaveBookRepository {
     }
   }
   
-  func saveBook(book: Book) async throws {
-    do {
+  func saveBook(book: Book) async {
       let newBook = LocalBookMapper.toDTO(book)
-      try await dataSource.saveBook(book: newBook)
-    } catch {
-      throw LocalDataBaseError.repository(.save(original: error))
-    }
+      await dataSource.saveBook(book: newBook)
   }
   
   //  func updateBook() { }
   
   func deleteBook(book: Book) async throws {
     do {
-      try await dataSource.deleteBook(by: book.isbn)
+      try await dataSource.deleteBook(isbn: book.isbn)
     } catch {
       throw LocalDataBaseError.repository(.delete(original: error))
     }

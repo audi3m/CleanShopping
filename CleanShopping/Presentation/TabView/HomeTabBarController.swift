@@ -69,15 +69,15 @@ extension HomeTabBarController {
       switch self {
       case .search:
         let viewModel = SearchBookViewModel(searchBookUseCase: container.searchBookUseCase,
-                                             saveBookUseCase: container.saveBookUseCase)
+                                            fetchBooksUseCase: container.fetchBooksUseCase)
         return UINavigationController(
           rootViewController: SearchBookViewController(viewModel: viewModel)
         )
       case .likes:
-        let viewModel = LikeBookViewModel(saveBookUseCase: container.saveBookUseCase)
+        let viewModel = LikeBookViewModel(fetchBooksUseCase: container.fetchBooksUseCase)
         return UINavigationController(rootViewController: LikeBookViewController(viewModel: viewModel))
       case .settings:
-        let viewModel = DetailViewViewModel(saveUseCase: container.saveBookUseCase)
+        let viewModel = DetailViewViewModel(toggleLikeUseCase: container.toggleLikeUseCase)
         return UINavigationController(rootViewController: DetailViewController(viewModel: viewModel))
       }
     }

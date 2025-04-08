@@ -18,7 +18,8 @@ final class DIContainer {
   private let saveBookRepository: SaveBookRepository
   
   let searchBookUseCase: SearchBookUseCase
-  let saveBookUseCase: SaveBookUseCase
+  let fetchBooksUseCase: FetchSavedBooksUseCase
+  let toggleLikeUseCase: ToggleLikeUseCase
   
   static let shared = DIContainer()
   
@@ -32,7 +33,8 @@ final class DIContainer {
     self.saveBookRepository = SaveBookRepositoryImpl(dataSource: saveBookDataSource)
     
     self.searchBookUseCase = SearchBookUseCaseImpl(repository: searchBookRepository)
-    self.saveBookUseCase = SaveBookUseCaseImpl(repository: saveBookRepository)
+    self.fetchBooksUseCase = FetchSavedBooksUseCaseImpl(repository: saveBookRepository)
+    self.toggleLikeUseCase = ToggleLikeUseCaseImpl(repository: saveBookRepository)
   }
 }
 

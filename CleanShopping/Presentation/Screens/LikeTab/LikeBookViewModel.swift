@@ -10,14 +10,14 @@ import RxSwift
 import RxCocoa
 
 final class LikeBookViewModel {
-  let saveBookUseCase: SaveBookUseCase
+  let fetchBooksUseCase: FetchSavedBooksUseCase
   private let disposeBag = DisposeBag()
   
   var input = Input()
   var output = Output()
   
-  init(saveBookUseCase: SaveBookUseCase) {
-    self.saveBookUseCase = saveBookUseCase
+  init(fetchBooksUseCase: FetchSavedBooksUseCase) {
+    self.fetchBooksUseCase = fetchBooksUseCase
     
     Task {
       try await initMockDataSource()
@@ -69,7 +69,7 @@ extension LikeBookViewModel {
 extension LikeBookViewModel {
   private func initDataSource() async throws {
     do {
-      let savedBooks = try await saveBookUseCase.executeFetch()
+      let savedBooks = try await fetchBooksUseCase.execute()
       let items = savedBooks.map { LikeBookSectionItem.bodyItem($0) }
       let bodySection = LikeBookSectionModel(header: "Body Section", items: items)
       output.dataSource.accept([bodySection])

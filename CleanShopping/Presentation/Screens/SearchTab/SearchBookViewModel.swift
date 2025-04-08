@@ -12,15 +12,15 @@ import RxCocoa
 final class SearchBookViewModel {
   
   private let searchBookUseCase: SearchBookUseCase
-  private let saveBookUseCase: SaveBookUseCase
+  private let fetchBooksUseCase: FetchSavedBooksUseCase
   private let disposeBag = DisposeBag()
   
   var input = Input()
   var output = Output()
   
-  init(searchBookUseCase: SearchBookUseCase, saveBookUseCase: SaveBookUseCase) {
+  init(searchBookUseCase: SearchBookUseCase, fetchBooksUseCase: FetchSavedBooksUseCase) {
     self.searchBookUseCase = searchBookUseCase
-    self.saveBookUseCase = saveBookUseCase
+    self.fetchBooksUseCase = fetchBooksUseCase
     
     initDataSource()
     transform()
