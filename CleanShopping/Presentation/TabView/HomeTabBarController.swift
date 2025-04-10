@@ -77,7 +77,7 @@ extension HomeTabBarController {
         let viewModel = LikeBookViewModel(fetchBooksUseCase: container.fetchBooksUseCase)
         return UINavigationController(rootViewController: LikeBookViewController(viewModel: viewModel))
       case .settings:
-        let viewModel = DetailViewViewModel(toggleLikeUseCase: container.toggleLikeUseCase)
+        let viewModel = DetailViewViewModel(toggleLikeUseCase: container.toggleLikeUseCase, book: Book.sample)
         return UINavigationController(rootViewController: DetailViewController(viewModel: viewModel))
       }
     }

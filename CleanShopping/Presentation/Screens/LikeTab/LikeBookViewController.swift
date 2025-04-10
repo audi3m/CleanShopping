@@ -75,8 +75,9 @@ extension LikeBookViewController {
     
     viewModel.output.tappedBook
       .bind(with: self) { owner, book in
-        let detailView = DetailViewController(viewModel: .init(saveUseCase: owner.viewModel.saveBookUseCase, book: book))
-        owner.present(detailView, animated: true)
+        let vm = DetailViewViewModel(toggleLikeUseCase: DIContainer.shared.toggleLikeUseCase, book: book)
+        let detailView = DetailViewController(viewModel: vm)
+        owner.navigationController?.pushViewController(detailView, animated: true)
       }
       .disposed(by: disposeBag)
   }

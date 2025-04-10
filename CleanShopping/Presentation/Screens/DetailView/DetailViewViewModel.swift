@@ -56,7 +56,7 @@ extension DetailViewViewModel {
     case .viewDidLoad:
       print("View did load")
     case .likeTapped(let book):
-      print("like tapped")
+      print("\(book.title)")
     }
   }
 }

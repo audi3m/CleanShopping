@@ -32,7 +32,7 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
   func fetchBooks() async throws -> [LocalBookModel] {
     do {
       let list = try modelContext.fetch(FetchDescriptor<LocalBookModel>())
-      print("Fetch like books")
+      print("Fetch like books: \(list.count)")
       return list
     } catch {
       throw LocalDataBaseError.dataSource(.fetch(original: error))
