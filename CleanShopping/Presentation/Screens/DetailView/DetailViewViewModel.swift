@@ -6,12 +6,19 @@
 //
 
 import Foundation
+import RxSwift
 
 final class DetailViewViewModel {
-  private let saveUseCase: SaveBookUseCase
+  private let toggleLikeUseCase: ToggleLikeUseCase
+  private let book: Book
+  private let disposeBag = DisposeBag()
   
-  init(saveUseCase: SaveBookUseCase) {
-    self.saveUseCase = saveUseCase
+  var input = Input()
+  var output = Output()
+  
+  init(toggleLikeUseCase: ToggleLikeUseCase, book: Book) {
+    self.toggleLikeUseCase = toggleLikeUseCase
+    self.book = book
     transform()
   }
   
@@ -20,27 +27,52 @@ final class DetailViewViewModel {
 extension DetailViewViewModel: InOutViewModel {
   
   struct Input {
-    
+    let book = PublishSubject<Void>()
+    let saveButtonInput: PublishSubject<Void> = .init()
   }
   
   struct Output {
-    
+    let didLoadBook = PublishSubject<Book>()
   }
   
   func transform() {
-    
+    input.book
+      .bind(with: self) { owner, book in
+        
+      }
+      .disposed(by: disposeBag)
   }
   
 }
 
 extension DetailViewViewModel {
-  func handleLike() {
-    
+  enum Action {
+    case viewDidLoad
+    case likeTapped(_ book: Book)
   }
   
-  private func saveBook(book: Book) async throws {
+  func action(_ action: Action) {
+    switch action {
+    case .viewDidLoad:
+      print("View did load")
+    case .likeTapped(let book):
+      print("\(book.title)")
+    }
+  }
+}
+
+extension DetailViewViewModel {
+  func handleLike(currentLike: Bool, book: Book) async throws {
     do {
-      try await saveUseCase.executeSave(book: book)
+      try await toggleLikeUseCase.execute(currentLike: currentLike, book: book)
+    } catch {
+      throw LocalDataBaseError.viewModel(.unkonwn)
+    }
+  }
+  
+  private func toggleLikeBook(currentLike: Bool, book: Book) async throws {
+    do {
+      try await toggleLikeUseCase.execute(currentLike: currentLike, book: book)
     } catch let error as LocalDataBaseError {
       switch error {
       case .dataSource(let original):
@@ -49,25 +81,10 @@ extension DetailViewViewModel {
         print("Repository SAVE Error: \(original)")
       case .useCase(let original):
         print("UseCase SAVE Error: \(original)")
+      case .viewModel(let original):
+        print("ViewModel Handle Error: \(original)")
       case .unknown:
         print("UNKOWN ERROR in SAVING")
-      }
-    }
-  }
-  
-  private func deleteBook(book: Book) async throws {
-    do {
-      try await saveUseCase.executeDelete(book: book)
-    } catch let error as LocalDataBaseError {
-      switch error {
-      case .dataSource(let original):
-        print("DataSource DELETE Error: \(original)")
-      case .repository(let original):
-        print("Repository DELETE Error: \(original)")
-      case .useCase(let original):
-        print("UseCase DELETE Error: \(original)")
-      case .unknown:
-        print("UNKOWN ERROR in DELETING")
       }
     }
   }

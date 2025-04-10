@@ -10,14 +10,14 @@ import RxSwift
 import RxCocoa
 
 final class LikeBookViewModel {
-  private let saveBookUseCase: SaveBookUseCase
+  let fetchBooksUseCase: FetchSavedBooksUseCase
   private let disposeBag = DisposeBag()
   
   var input = Input()
   var output = Output()
   
-  init(saveBookUseCase: SaveBookUseCase) {
-    self.saveBookUseCase = saveBookUseCase
+  init(fetchBooksUseCase: FetchSavedBooksUseCase) {
+    self.fetchBooksUseCase = fetchBooksUseCase
     
     Task {
       try await initMockDataSource()
@@ -30,24 +30,46 @@ final class LikeBookViewModel {
 extension LikeBookViewModel: InOutViewModel {
   
   struct Input {
-    var tappedBook = PublishRelay<Book>()
+    let viewDidLoad = PublishRelay<Void>()
+    let tappedBook = PublishRelay<Book>()
   }
   
   struct Output {
     let dataSource = BehaviorRelay<[LikeBookSectionModel]>(value: [])
+    let tappedBook = PublishRelay<Book>()
   }
   
   func transform() {
-    
+    input.tappedBook
+      .bind(with: self) { owner, book in
+        owner.output.tappedBook.accept(book)
+      }
+      .disposed(by: disposeBag)
   }
   
+}
+
+extension LikeBookViewModel {
+  enum Action {
+    case viewDidLoad
+    case bookTapped(_ book: Book)
+  }
+  
+  func action(_ action: Action) {
+    switch action {
+    case .viewDidLoad:
+      input.viewDidLoad.accept(())
+    case .bookTapped(let book):
+      input.tappedBook.accept(book)
+    }
+  }
 }
 
 // Rx
 extension LikeBookViewModel {
   private func initDataSource() async throws {
     do {
-      let savedBooks = try await saveBookUseCase.executeFetch()
+      let savedBooks = try await fetchBooksUseCase.execute()
       let items = savedBooks.map { LikeBookSectionItem.bodyItem($0) }
       let bodySection = LikeBookSectionModel(header: "Body Section", items: items)
       output.dataSource.accept([bodySection])

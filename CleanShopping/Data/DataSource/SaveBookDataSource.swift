@@ -10,8 +10,8 @@ import SwiftData
 
 protocol SaveBookDataSource {
   func fetchBooks() async throws -> [LocalBookModel]
-  func saveBook(book: LocalBookModel) async throws
-  func deleteBook(by isbn: String) async throws
+  func saveBook(book: LocalBookModel) async
+  func deleteBook(isbn: String) async throws
 }
 
 @MainActor
@@ -22,10 +22,7 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
   
   init() {
     do {
-      self.modelContainer = try ModelContainer(
-        for: LocalBookModel.self,
-        configurations: ModelConfiguration(isStoredInMemoryOnly: false)
-      )
+      self.modelContainer = try ModelContainer(for: LocalBookModel.self)
       self.modelContext = modelContainer.mainContext
     } catch {
       fatalError("ModelContainer 생성 실패: \(error)")
@@ -35,21 +32,21 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
   func fetchBooks() async throws -> [LocalBookModel] {
     do {
       let list = try modelContext.fetch(FetchDescriptor<LocalBookModel>())
-      print("Fetch like books")
+      print("Fetch like books: \(list.count)")
       return list
     } catch {
       throw LocalDataBaseError.dataSource(.fetch(original: error))
     }
   }
   
-  func saveBook(book: LocalBookModel) async throws {
+  func saveBook(book: LocalBookModel) async {
     modelContext.insert(book)
     print("Save book: \(book.title)")
   }
   
-  func deleteBook(by isbn: String) async throws {
+  func deleteBook(isbn: String) async throws {
     do {
-      let books = try await getBooks(by: isbn)
+      let books = try await getBooksByISBN(isbn: isbn)
       for book in books {
         modelContext.delete(book)
         print("Deleted book: \(book.title)")
@@ -59,11 +56,10 @@ final class SaveBookDataSourceImpl: SaveBookDataSource {
     }
   }
   
-  private func getBooks(by isbn: String) async throws -> [LocalBookModel] {
+  private func getBooksByISBN(isbn: String) async throws -> [LocalBookModel] {
     do {
       let descriptor = FetchDescriptor<LocalBookModel>(predicate: #Predicate { $0.isbn == isbn })
-      let books = try modelContext.fetch(descriptor)
-      return books
+      return try modelContext.fetch(descriptor)
     } catch {
       throw LocalDataBaseError.dataSource(.fetch(original: error))
     }

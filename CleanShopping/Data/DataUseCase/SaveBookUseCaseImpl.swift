@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData 
 
-final class SaveBookUseCaseImpl: SaveBookUseCase {
+final class FetchSavedBooksUseCaseImpl: FetchSavedBooksUseCase {
   
   private let repository: SaveBookRepository
   
@@ -16,28 +16,33 @@ final class SaveBookUseCaseImpl: SaveBookUseCase {
     self.repository = repository
   }
   
-  func executeFetch() async throws -> [Book] {
+  func execute() async throws -> [Book] {
     do {
-      let list = try await repository.fetchBooks()
-      return list
+      return try await repository.fetchBooks()
     } catch {
       throw LocalDataBaseError.useCase(.fetch(original: error))
     }
   }
   
-  func executeSave(book: Book) async throws {
-    do {
-      try await repository.saveBook(book: book)
-    } catch {
-      throw LocalDataBaseError.useCase(.save(original: error))
-    }
+}
+
+final class ToggleLikeUseCaseImpl: ToggleLikeUseCase {
+  
+  private let repository: SaveBookRepository
+  
+  init(repository: SaveBookRepository) {
+    self.repository = repository
   }
   
-  func executeDelete(book: Book) async throws {
+  func execute(currentLike: Bool, book: Book) async throws {
     do {
-      try await repository.deleteBook(book: book)
+      if currentLike {
+        try await repository.deleteBook(book: book)
+      } else {
+        await repository.saveBook(book: book)
+      }
     } catch {
-      throw LocalDataBaseError.useCase(.delete(original: error))
+      throw LocalDataBaseError.useCase(.save(original: error))
     }
   }
   

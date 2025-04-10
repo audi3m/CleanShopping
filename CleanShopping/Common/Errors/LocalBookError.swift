@@ -15,12 +15,14 @@ enum LocalDataBaseError: Error {
   case dataSource(OperationError)
   case repository(OperationError)
   case useCase(OperationError)
+  case viewModel(OperationError)
   case unknown
   
   enum OperationError: Error {
     case fetch(original: Error)
     case save(original: Error)
     case delete(original: Error)
+    case unkonwn
   }
   
 }
