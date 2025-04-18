@@ -42,6 +42,7 @@ extension SearchBookViewModel: InOutViewModel {
   
   struct Output {
     let dataSource = BehaviorRelay<[SearchBookSectionModel]>(value: [])
+    let likeBooks = BehaviorRelay<Set<String>>(value: [])
     let isEndPage = BehaviorRelay<Bool>(value: false)
     let optionChanged = PublishRelay<Void>()
   }

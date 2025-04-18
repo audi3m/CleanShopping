@@ -24,6 +24,10 @@ final class SaveBookRepositoryImpl: SaveBookRepository {
     }
   }
   
+  func makeBooksSet() async throws -> Set<String> {
+    
+  }
+  
   func saveBook(book: Book) async {
       let newBook = LocalBookMapper.toDTO(book)
       await dataSource.saveBook(book: newBook)

@@ -27,7 +27,6 @@ final class DetailViewViewModel {
 extension DetailViewViewModel: InOutViewModel {
   
   struct Input {
-    let book = PublishSubject<Void>()
     let saveButtonInput: PublishSubject<Void> = .init()
   }
   
@@ -36,11 +35,7 @@ extension DetailViewViewModel: InOutViewModel {
   }
   
   func transform() {
-    input.book
-      .bind(with: self) { owner, book in
-        
-      }
-      .disposed(by: disposeBag)
+    
   }
   
 }
@@ -54,7 +49,7 @@ extension DetailViewViewModel {
   func action(_ action: Action) {
     switch action {
     case .viewDidLoad:
-      print("View did load")
+      
     case .likeTapped(let book):
       print("\(book.title)")
     }
